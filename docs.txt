@@ -1,0 +1,6 @@
+# Research paper achieving 0.651 accuracy
+https://digitalcommons.bryant.edu/cgi/viewcontent.cgi?article=1000&context=honors_data_science
+
+# Accuracy of 75%
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9764182/
+

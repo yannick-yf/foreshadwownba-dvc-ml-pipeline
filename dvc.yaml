@@ -1,0 +1,23 @@
+#TODO: Create a step to validate the dataframe using python pacakge
+#TODO: All varaibles as params for DVC
+vars:
+  - project:
+      aws: cads-it
+      directory: .
+stages:
+  get_training_dataset:
+    cmd: python3 -m src.get_training_dataset --config=params.yaml
+    deps:
+      - src/get_training_dataset.py
+    params:
+      - base
+      - get_training_dataset
+    outs:
+      - ./data/input/nba_training_dataset.csv
+
+      
+
+
+
+
+      
