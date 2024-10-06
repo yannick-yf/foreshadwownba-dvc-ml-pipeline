@@ -1,5 +1,10 @@
-#TODO: Create a step to validate the dataframe using python pacakge
-#TODO: All varaibles as params for DVC
+#TODO: Dummy Classifier
+#TODO: Baseline Classifier
+#TODO: Feature selction methods
+#TODO: Init multiple model training
+#TODO: Training model
+#TODO: Save model
+
 vars:
   - project:
       aws: cads-it
@@ -14,7 +19,29 @@ stages:
       - get_training_dataset
     outs:
       - ./data/input/nba_training_dataset.csv
-
+  data_split:
+    cmd: python -m src.data_split --config=params.yaml
+    deps:
+      - src/data_split.py
+      - ./data/input/nba_training_dataset.csv
+    params:
+      - base
+      - get_training_dataset
+      - data_split
+    outs:
+      - ./data/processed/train_dataset.csv
+      - ./data/processed/test_dataset.csv
+  dummy_and_baseline_classifier:
+    cmd: python -m src.dummy_and_baseline_classifier --config=params.yaml
+    deps:
+      - src/dummy_and_baseline_classifier.py
+      - ./data/processed/train_dataset.csv
+      - ./data/processed/test_dataset.csv
+    params:
+      - base
+      - get_training_dataset
+      - data_split
+      - dummy_classifier
       
 
 

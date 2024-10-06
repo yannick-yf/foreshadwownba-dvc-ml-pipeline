@@ -1,7 +1,14 @@
 
 base:
   log_level: INFO
+  random_state: 42
 
 get_training_dataset:
-  nba_games_training_dataset: nba_games_training_dataset
-  player_attributes_salaries_dataset: player_attributes_salaries_dataset
+  training_dataset: data/input/nba_training_dataset.csv
+
+data_split:
+  split_ratio: 0.20
+  group_cv_variable: id
+
+dummy_classifier:
+  target_variable: results

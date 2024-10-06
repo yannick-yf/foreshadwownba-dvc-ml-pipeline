@@ -51,8 +51,10 @@ def get_training_dataset(config_path: Path) -> pd.DataFrame:
         engine,
     )
 
+    training_set = config_params["get_training_dataset"]["training_dataset"]
+
     nba_training_dataset.to_csv(
-        "./data/input/nba_training_dataset.csv", index=False
+        training_set, index=False
     )
 
     logger.info("Download training dataset from the database is complete.")

@@ -96,15 +96,15 @@ stages:
     deps:
     - path: src/get_training_dataset.py
       hash: md5
-      md5: ef2f96d241db72c96facaaa7c98cae91
-      size: 1842
+      md5: cd5b0992f029d88f459582d77373e35d
+      size: 1893
     params:
       params.yaml:
         base:
           log_level: INFO
+          random_state: 42
         get_training_dataset:
-          nba_games_training_dataset: nba_games_training_dataset
-          player_attributes_salaries_dataset: player_attributes_salaries_dataset
+          training_dataset: data/input/nba_training_dataset.csv
     outs:
     - path: ./data/input/nba_training_dataset.csv
       hash: md5
@@ -290,3 +290,60 @@ stages:
         get_training_dataset:
           nba_games_training_dataset: nba_games_training_dataset
           player_attributes_salaries_dataset: player_attributes_salaries_dataset
+  data_split:
+    cmd: python -m src.data_split --config=params.yaml
+    deps:
+    - path: ./data/input/nba_training_dataset.csv
+      hash: md5
+      md5: 349b971d8bf6c05e14d85c28304eae5d
+      size: 12380255
+    - path: src/data_split.py
+      hash: md5
+      md5: 1974c690c4f5c6bca82c6f40d11c5f84
+      size: 2117
+    params:
+      params.yaml:
+        base:
+          log_level: INFO
+          random_state: 42
+        data_split:
+          split_ratio: 0.2
+          group_cv_variable: id
+        get_training_dataset:
+          training_dataset: data/input/nba_training_dataset.csv
+    outs:
+    - path: ./data/processed/test_dataset.csv
+      hash: md5
+      md5: e372bba7dfc3e85b39bd9d45b9b53f8f
+      size: 2473670
+    - path: ./data/processed/train_dataset.csv
+      hash: md5
+      md5: c6b0b5d7a97bdb20d859f4c5a4c20474
+      size: 9907879
+  dummy_and_baseline_classifier:
+    cmd: python -m src.dummy_and_baseline_classifier --config=params.yaml
+    deps:
+    - path: ./data/processed/test_dataset.csv
+      hash: md5
+      md5: e372bba7dfc3e85b39bd9d45b9b53f8f
+      size: 2473670
+    - path: ./data/processed/train_dataset.csv
+      hash: md5
+      md5: c6b0b5d7a97bdb20d859f4c5a4c20474
+      size: 9907879
+    - path: src/dummy_and_baseline_classifier.py
+      hash: md5
+      md5: 297330b5dc970746e2a004fea1fc11ff
+      size: 3459
+    params:
+      params.yaml:
+        base:
+          log_level: INFO
+          random_state: 42
+        data_split:
+          split_ratio: 0.2
+          group_cv_variable: id
+        dummy_classifier:
+          target_variable: results
+        get_training_dataset:
+          training_dataset: data/input/nba_training_dataset.csv

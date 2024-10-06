@@ -4,3 +4,5 @@
 /nba_games_training_dataset_ratio_average_features.csv
 /nba_games_training_dataset_cleaned_w_features.csv
 /nba_games_training_dataset_final.csv
+/train_dataset.csv
+/test_dataset.csv
