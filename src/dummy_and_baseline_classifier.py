@@ -47,6 +47,9 @@ def dummy_and_baseline_classifier(config_path: Text) -> None:
 
     X_train = train_df.drop([target_column], axis=1)
     y_train = train_df[target_column]
+
+    X_test = test_df.drop([target_column], axis=1)
+    y_test = test_df[target_column]
     
     #--------------------------------
     # Dummy Classifier
@@ -54,8 +57,8 @@ def dummy_and_baseline_classifier(config_path: Text) -> None:
     dummy_clf = DummyClassifier(strategy="most_frequent")
     dummy_clf.fit(X_train, y_train)
     DummyClassifier(strategy='most_frequent')
-    dummy_clf.predict(X_train)
-    dummy_classifier_score = round(dummy_clf.score(X_train, y_train), 3)
+    dummy_clf.predict(X_test)
+    dummy_classifier_score = round(dummy_clf.score(X_test, y_test), 3)
 
     logger.info(f"Dummy Classifier Score: {dummy_classifier_score}")
 

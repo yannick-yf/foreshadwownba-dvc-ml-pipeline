@@ -1,8 +1,8 @@
-#TODO: Dummy Classifier
-#TODO: Baseline Classifier
+#TODO: Dummy Classifier - DONE
+#TODO: Baseline Classifier - DONE
 #TODO: Feature selction methods
-#TODO: Init multiple model training
-#TODO: Training model
+#TODO: Init multiple model training - DONE
+#TODO: Training model - Get 1l per games ang get 1l per game to get proper accuracy and performance
 #TODO: Save model
 
 vars:
@@ -42,6 +42,30 @@ stages:
       - get_training_dataset
       - data_split
       - dummy_classifier
+  initial_multiple_models_training:
+      cmd: python -m src.initial_multiple_models_training --config=params.yaml 
+      deps:
+        - src/initial_multiple_models_training.py
+      params:
+        - base
+        - initial_multiple_models_training
+        - data_split
+      outs:
+        - data/processed/top_3_models.csv
+  train:
+      cmd: python -m src.train --config=params.yaml
+      deps:
+        - src/train.py
+        - src/training/train_cross_val.py
+        - ./data/processed/train_dataset.csv
+        - ./data/processed/test_dataset.csv
+      params:
+        - base
+        - train
+        - data_split
+        - initial_multiple_models_training
+      # outs:
+      #   - ./models/model.joblib
       
 
 
