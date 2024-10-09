@@ -86,12 +86,8 @@ def train_cross_val(
         target_column, 
         group_cv_variable,
         'id_season',	
-        # 'game_nb',	
-        # 'extdom',	
         'tm',	
         'opp',
-        'pts_tm',	
-        'pts_opp'
         ], axis=1)
     
     y_train = train_df[target_column]
@@ -101,47 +97,11 @@ def train_cross_val(
         "precision_score": make_scorer(precision_score),
         "accuracy_score": make_scorer(accuracy_score),
     }
+
+    estimator = XGBClassifier(**estimator_configs)
     
-    # handle categorical variable:
-    X_train["last_game_overtime"] = np.where(
-        X_train["last_game_overtime"].isin(["2OT", "3OT", "4OT", "5OT"]),
-        "Multiple_OT",
-        X_train["last_game_overtime"],
-    )
-
-    drop_binary_enc = OneHotEncoder(drop="if_binary").fit(
-        X_train[["extdom", "last_game_overtime"]]
-    )
-
-    dummies_variables = drop_binary_enc.transform(
-        X_train[["extdom", "last_game_overtime"]]
-    ).toarray()
-
-    dummies_variables_df = pd.DataFrame(
-        dummies_variables, columns=drop_binary_enc.get_feature_names_out()
-    )
-
-    dummies_variables_df = dummies_variables_df.drop("last_game_overtime_NOT", axis=1)
-
-    X_train = pd.concat([X_train, dummies_variables_df], axis=1)
-
-    X_train = X_train.drop(["extdom", "last_game_overtime"], axis=1)
-
-    # best_estimator = None
-    # best_scores = None
-
-    # for estimator_config in estimator_configs:
-    #     estimator_name = estimator_config['name']
-    #     param_grid = estimator_config['param_grid']
-
-    #     if estimator_name not in estimators.keys():
-    #         raise UnsupportedClassifier(estimator_name)
-
-    #     #estimator = estimators[estimator_name]()  # Create the estimator instance
-    #     estimator= get_estimator(estimator_name, **param_grid) # Set the parameters
-
     scores = cross_validate(
-        XGBClassifier(**estimator_configs),
+        estimator,
         X_train,
         y_train,
         scoring=scoring,
@@ -152,5 +112,10 @@ def train_cross_val(
         n_jobs=-1,
     )
 
-    return scores
+    # ------------------ Train the general models--------------------#
+    # Train the model with the best params - for now only one set of params
+    estimator.fit(X_train, y_train)
+
+
+    return scores, estimator
 

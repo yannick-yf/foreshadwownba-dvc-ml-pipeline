@@ -44,21 +44,18 @@ def pre_train_multplie_models(config_path: Text) -> pd.DataFrame:
     cross_validation_n_splits = config['initial_multiple_models_training']['cross_validation_n_splits']
 
     logger.info("Load train dataset")
-    train_df = pd.read_csv('./data/processed/train_dataset.csv')
+    train_df = pd.read_csv('./data/processed/train_dataset_fs.csv')
 
     logger.info("Multiple Models Pre Train:")
 
     groups = train_df[group_cv_variable]
+    
     X_train = train_df.drop([
         target_column, 
         group_cv_variable,
         'id_season',	
-        # 'game_nb',	
-        # 'extdom',	
         'tm',	
         'opp',
-        'pts_tm',	
-        'pts_opp'
         ], axis=1)
 
     y_train = train_df[target_column]

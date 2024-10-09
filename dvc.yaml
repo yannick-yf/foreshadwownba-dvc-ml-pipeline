@@ -1,9 +1,12 @@
 #TODO: Dummy Classifier - DONE
 #TODO: Baseline Classifier - DONE
-#TODO: Feature selction methods
+#TODO: Feature selction methods - Manual one for now  - Done
 #TODO: Init multiple model training - DONE
-#TODO: Training model - Get 1l per games ang get 1l per game to get proper accuracy and performance
-#TODO: Save model
+#TODO: Training model DONE - Only Xgboost for now
+#TODO: Save model - DONE
+
+#TODO: Evaluation step
+#TODO: Visualisation via dvc plot tracking
 
 vars:
   - project:
@@ -42,10 +45,26 @@ stages:
       - get_training_dataset
       - data_split
       - dummy_classifier
+  feature_selection:
+    cmd: python -m src.feature_selection --config=params.yaml
+    deps:
+      - src/feature_selection.py
+      - ./data/processed/train_dataset.csv
+      - ./data/processed/test_dataset.csv
+    params:
+      - base
+      - get_training_dataset
+      - data_split
+      - dummy_classifier
+    outs:
+      - ./data/processed/train_dataset_fs.csv
+      - ./data/processed/test_dataset_fs.csv
   initial_multiple_models_training:
       cmd: python -m src.initial_multiple_models_training --config=params.yaml 
       deps:
         - src/initial_multiple_models_training.py
+        - ./data/processed/train_dataset_fs.csv
+        - ./data/processed/test_dataset_fs.csv
       params:
         - base
         - initial_multiple_models_training
@@ -57,15 +76,37 @@ stages:
       deps:
         - src/train.py
         - src/training/train_cross_val.py
-        - ./data/processed/train_dataset.csv
-        - ./data/processed/test_dataset.csv
+        - ./data/processed/train_dataset_fs.csv
+        - ./data/processed/test_dataset_fs.csv
       params:
         - base
         - train
         - data_split
         - initial_multiple_models_training
-      # outs:
-      #   - ./models/model.joblib
+      outs:
+        - ./models/model.joblib
+        - ./models/cross_val_score.csv
+  evaluate:
+      cmd: python3 -m src.evaluate --config=params.yaml
+      deps:
+        - src/evaluate.py
+        - ./models/cross_val_score.csv
+      params:
+        - base
+        - train
+        - data_split
+        - evaluate
+      plots:
+          #- data/reports/regression_plot.png
+          - data/reports/shap_beeswarm.png
+          - data/reports/shap_plot_bar.png
+          # - data/reports/regression_plot_data.csv:
+          #     template: scatter
+          #     x: predicted
+          #     y: y_true
+      metrics:
+      - data/reports/metrics.json:
+          cache: false
       
 
 

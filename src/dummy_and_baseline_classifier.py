@@ -42,7 +42,6 @@ def dummy_and_baseline_classifier(config_path: Text) -> None:
     train_df = pd.read_csv('./data/processed/train_dataset.csv')
     test_df = pd.read_csv('./data/processed/test_dataset.csv')
 
-
     logger.info("Multiple Models Pre Train:")
 
     X_train = train_df.drop([target_column], axis=1)
@@ -65,21 +64,12 @@ def dummy_and_baseline_classifier(config_path: Text) -> None:
     #--------------------------------
     # Baseline Classifier - Simple Domain expert rules
 
-    test_df_processed = pd.merge(
-        test_df[['id', 'before_average_W_ratio', 'tm', 'opp', 'results']],
-        test_df[['id', 'before_average_W_ratio', 'tm', 'opp']],
-        how='left',
-        on='id')
-
-    # Remove duplciate - comditon is where tm_x != tm_y
-    test_df_processed = test_df_processed[test_df_processed['tm_x'] != test_df_processed['tm_y']]
-
-    test_df_processed['benchmark_prob'] = np.where(
-        test_df_processed['before_average_W_ratio_x'] > test_df_processed['before_average_W_ratio_y'], 
+    test_df['benchmark_prob'] = np.where(
+        test_df['before_average_W_ratio'] > test_df['before_average_W_ratio_opp'], 
         1, 
         0)
 
-    tn, fp, fn, tp = confusion_matrix(test_df_processed['results'], test_df_processed['benchmark_prob']).ravel()
+    tn, fp, fn, tp = confusion_matrix(test_df['results'], test_df['benchmark_prob']).ravel()
     precision_metric = round(tp / (tp + fp), 3)
     specificity_metric = round(tn / (tn+fp), 3)
     recall_metric = round(tp / (tp + fn), 3)
@@ -91,7 +81,6 @@ def dummy_and_baseline_classifier(config_path: Text) -> None:
     logger.info(f"Baseline Specificity: {specificity_metric}")
     logger.info(f"Baseline Recall: {recall_metric}")
     logger.info(f"Baseline F1: {f1_metric}")
-
 
 if __name__ == '__main__':
 

@@ -15,26 +15,21 @@ dummy_classifier:
 
 initial_multiple_models_training:
   random_state: 21
-  cross_validation_n_splits: 3
+  cross_validation_n_splits: 10
 
 train:
   top_3_models: data/processed/top_3_models.csv
-  model_name: Extreme Gradient Boosting # Random Forest Classifier
-  param_grid:
-    max_depth: 3
-    n_estimators: 1000
-    # max_features: 0.4
-    learning_rate: 0.05
-  # estimator_configs:
-  #   - name: Random Forest Classifier
-  #     param_grid:
-  #       max_depth: 5
-  #       n_estimators: 1000
-  #       max_features: 0.5
-  #   - name: Extreme Gradient Boosting
-  #     param_grid:
-  #       max_depth: 4
-  #       n_estimators: 100
-  #       learning_rate: 0.01
+  model_name: Extreme Gradient Boosting
   cross_validation_n_splits: 10
   scoring_metric: accuracy
+  param_grid:
+    max_depth: 2
+    n_estimators: 750
+    learning_rate: 0.05
+
+evaluate:
+  metrics_path: data/reports/metrics.json
+  # regression_plot: regression_plot.png
+  shap_beeswarm_image: shap_beeswarm.png
+  shap_plot_bar_image: shap_plot_bar.png
+  # regression_plot_data: regression_plot_data.csv
