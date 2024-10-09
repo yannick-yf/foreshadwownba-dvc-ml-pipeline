@@ -53,7 +53,7 @@ def train(config_path: Text) -> pd.DataFrame:
     logger.info(f"cross_validation_n_splits: {cross_validation_n_splits}")
 
     logger.info("Train Cross-Validation to get best params")
-    scores, model = train_cross_val(
+    scores, model, cross_val_pred_train_df = train_cross_val(
         train_df=train_df,
         target_column=target_column,
         group_cv_variable=group_cv_variable,
@@ -73,7 +73,9 @@ def train(config_path: Text) -> pd.DataFrame:
     logger.info(f"CV ACCURACY: {cv_accuracy};")
     logger.info(f"CV PRECISION: {cv_precision};")
 
-    cross_val_scores_df.to_csv('./models/cross_val_score.csv')
+
+    cross_val_pred_train_df.to_csv('./models/cross_val_pred.csv', index=False)
+    cross_val_scores_df.to_csv('./models/cross_val_score.csv', index=False)
 
     logger.info("Save model")
     joblib.dump(model, './models/model.joblib')

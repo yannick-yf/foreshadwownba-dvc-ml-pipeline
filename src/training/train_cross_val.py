@@ -16,7 +16,7 @@ from sklearn.metrics import (
     auc)
 
 from sklearn.model_selection import GroupKFold
-from sklearn.model_selection import cross_validate
+from sklearn.model_selection import cross_validate, cross_val_predict
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.preprocessing import OneHotEncoder
@@ -112,9 +112,64 @@ def train_cross_val(
         n_jobs=-1,
     )
 
-    # ------------------ Train the general models--------------------#
-    # Train the model with the best params - for now only one set of params
+    train_w_cv_pred = get_predicted_values_from_cross_val(
+        target_column, 
+        group_cv_variable,
+        estimator,
+        train_df,
+        X_train,
+        y_train,
+        cv,
+        groups
+    )
+
     estimator.fit(X_train, y_train)
 
-    return scores, estimator
+    return scores, estimator, train_w_cv_pred
 
+
+def get_predicted_values_from_cross_val(
+        target_column, 
+        group_cv_variable,
+        estimator,
+        train_df,
+        X_train,
+        y_train,
+        cv,
+        groups) -> pd.DataFrame:
+    """Get predicted values from cross validation."""
+
+    y_cv_pred_proba = cross_val_predict(
+        estimator,
+        X_train,
+        y_train,
+        cv=cv,
+        groups=groups,
+        n_jobs=-1,
+        method='predict_proba')
+    
+    y_cv_pred_results = cross_val_predict(
+        estimator, 
+        X_train,
+        y_train,
+        cv=cv,
+        groups=groups,
+        n_jobs=-1,
+        method='predict')
+    
+    train_w_cv_pred = train_df[[
+            target_column, 
+            group_cv_variable,
+            'id_season',	
+            'tm',	
+            'opp',
+            ]]
+    
+    y_cv_pred_proba_df = pd.DataFrame(y_cv_pred_proba)
+    y_cv_pred_proba_df.columns = ['y_cv_pred_0', 'y_cv_pred_1']
+
+    train_w_cv_pred['y_cv_pred_0'] = y_cv_pred_proba_df['y_cv_pred_0']
+    train_w_cv_pred['y_cv_pred_1'] = y_cv_pred_proba_df['y_cv_pred_1']
+    train_w_cv_pred['y_cv_pred_results'] = y_cv_pred_results
+
+    return train_w_cv_pred

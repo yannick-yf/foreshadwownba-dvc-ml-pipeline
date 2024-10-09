@@ -307,30 +307,30 @@ stages:
           log_level: INFO
           random_state: 42
         data_split:
-          split_ratio: 0.2
+          split_ratio: 0.15
           group_cv_variable: id
         get_training_dataset:
           training_dataset: data/input/nba_training_dataset.csv
     outs:
     - path: ./data/processed/test_dataset.csv
       hash: md5
-      md5: 6c637b32f4a76209dd80ea4897ae4f12
-      size: 2614687
+      md5: 17491585cf939c0f4bea06f65063dc12
+      size: 1959714
     - path: ./data/processed/train_dataset.csv
       hash: md5
-      md5: 826f537d23bab05cba92ecac3293f203
-      size: 10437642
+      md5: b7c5f14478dfb87f1f6a0d04e4354f57
+      size: 11092615
   dummy_and_baseline_classifier:
     cmd: python -m src.dummy_and_baseline_classifier --config=params.yaml
     deps:
     - path: ./data/processed/test_dataset.csv
       hash: md5
-      md5: 6c637b32f4a76209dd80ea4897ae4f12
-      size: 2614687
+      md5: 17491585cf939c0f4bea06f65063dc12
+      size: 1959714
     - path: ./data/processed/train_dataset.csv
       hash: md5
-      md5: 826f537d23bab05cba92ecac3293f203
-      size: 10437642
+      md5: b7c5f14478dfb87f1f6a0d04e4354f57
+      size: 11092615
     - path: src/dummy_and_baseline_classifier.py
       hash: md5
       md5: 667b316c7110e5fb07a042f8b9f3cb8e
@@ -341,7 +341,7 @@ stages:
           log_level: INFO
           random_state: 42
         data_split:
-          split_ratio: 0.2
+          split_ratio: 0.15
           group_cv_variable: id
         dummy_classifier:
           target_variable: results
@@ -352,12 +352,12 @@ stages:
     deps:
     - path: ./data/processed/test_dataset_fs.csv
       hash: md5
-      md5: 0c5f43483516a700b2f223fb8594ff7a
-      size: 735273
+      md5: 5830cda0193bc11197bfb62ffb332d48
+      size: 550774
     - path: ./data/processed/train_dataset_fs.csv
       hash: md5
-      md5: b3a1e69a9dc64193aabaff08d3dcae48
-      size: 2931494
+      md5: fbd9dc4e3f0055e31d3dcb75b5af7f4a
+      size: 3115993
     - path: src/initial_multiple_models_training.py
       hash: md5
       md5: 030c954382e814e59edeeec6e87dd518
@@ -368,7 +368,7 @@ stages:
           log_level: INFO
           random_state: 42
         data_split:
-          split_ratio: 0.2
+          split_ratio: 0.15
           group_cv_variable: id
         initial_multiple_models_training:
           random_state: 21
@@ -376,34 +376,34 @@ stages:
     outs:
     - path: data/processed/top_3_models.csv
       hash: md5
-      md5: e78d6f02c5e655c0f27dc20babb3ff13
-      size: 72
+      md5: 2c18278fdf65391e5ae03e5c775b9a19
+      size: 81
   train:
     cmd: python -m src.train --config=params.yaml
     deps:
     - path: ./data/processed/test_dataset_fs.csv
       hash: md5
-      md5: 0c5f43483516a700b2f223fb8594ff7a
-      size: 735273
+      md5: 5830cda0193bc11197bfb62ffb332d48
+      size: 550774
     - path: ./data/processed/train_dataset_fs.csv
       hash: md5
-      md5: b3a1e69a9dc64193aabaff08d3dcae48
-      size: 2931494
+      md5: fbd9dc4e3f0055e31d3dcb75b5af7f4a
+      size: 3115993
     - path: src/train.py
       hash: md5
-      md5: bedad570dcb1b8ec1fe522bfc2f41d49
-      size: 3072
+      md5: bd7154f12010e2d9694a35c905887908
+      size: 3190
     - path: src/training/train_cross_val.py
       hash: md5
-      md5: 25aafaebb435ef6404234c5e20d9797a
-      size: 3136
+      md5: ae354751ad77d20a2a52d7f73e6ed329
+      size: 4404
     params:
       params.yaml:
         base:
           log_level: INFO
           random_state: 42
         data_split:
-          split_ratio: 0.2
+          split_ratio: 0.15
           group_cv_variable: id
         initial_multiple_models_training:
           random_state: 21
@@ -418,25 +418,29 @@ stages:
             n_estimators: 750
             learning_rate: 0.05
     outs:
+    - path: ./models/cross_val_pred.csv
+      hash: md5
+      md5: 064da5803711f29a908570e57399a495
+      size: 1584221
     - path: ./models/cross_val_score.csv
       hash: md5
-      md5: d33a089c4355b20c3a47bfa5e89ad8a9
-      size: 8840
+      md5: 1f3bac5d5ae84512bf9daf429068fe1a
+      size: 8823
     - path: ./models/model.joblib
       hash: md5
-      md5: 1d1bc4bdaa0bb4d090b1780af5c29738
+      md5: a47d9a8df27149160a97537fc179e8df
       size: 676118
   feature_selection:
     cmd: python -m src.feature_selection --config=params.yaml
     deps:
     - path: ./data/processed/test_dataset.csv
       hash: md5
-      md5: 6c637b32f4a76209dd80ea4897ae4f12
-      size: 2614687
+      md5: 17491585cf939c0f4bea06f65063dc12
+      size: 1959714
     - path: ./data/processed/train_dataset.csv
       hash: md5
-      md5: 826f537d23bab05cba92ecac3293f203
-      size: 10437642
+      md5: b7c5f14478dfb87f1f6a0d04e4354f57
+      size: 11092615
     - path: src/feature_selection.py
       hash: md5
       md5: 7b15b7083936b13a0315db4da9d6673e
@@ -447,7 +451,7 @@ stages:
           log_level: INFO
           random_state: 42
         data_split:
-          split_ratio: 0.2
+          split_ratio: 0.15
           group_cv_variable: id
         dummy_classifier:
           target_variable: results
@@ -471,30 +475,30 @@ stages:
     outs:
     - path: ./data/processed/test_dataset_fs.csv
       hash: md5
-      md5: 0c5f43483516a700b2f223fb8594ff7a
-      size: 735273
+      md5: 5830cda0193bc11197bfb62ffb332d48
+      size: 550774
     - path: ./data/processed/train_dataset_fs.csv
       hash: md5
-      md5: b3a1e69a9dc64193aabaff08d3dcae48
-      size: 2931494
+      md5: fbd9dc4e3f0055e31d3dcb75b5af7f4a
+      size: 3115993
   evaluate:
     cmd: python3 -m src.evaluate --config=params.yaml
     deps:
     - path: ./models/cross_val_score.csv
       hash: md5
-      md5: d33a089c4355b20c3a47bfa5e89ad8a9
-      size: 8840
+      md5: 1f3bac5d5ae84512bf9daf429068fe1a
+      size: 8823
     - path: src/evaluate.py
       hash: md5
-      md5: 394f032557a5da4f74d061b22e6c73dc
-      size: 5388
+      md5: 83fa797ef25b419137204de5635f8426
+      size: 8070
     params:
       params.yaml:
         base:
           log_level: INFO
           random_state: 42
         data_split:
-          split_ratio: 0.2
+          split_ratio: 0.15
           group_cv_variable: id
         evaluate:
           metrics_path: data/reports/metrics.json
@@ -510,15 +514,19 @@ stages:
             n_estimators: 750
             learning_rate: 0.05
     outs:
+    - path: ./models/test_df_w_pred.csv
+      hash: md5
+      md5: 15fed93601e192d038da7b40c636f5f2
+      size: 279789
     - path: data/reports/metrics.json
       hash: md5
-      md5: 73bc893769c87c80a7ba3339e862cbe4
-      size: 130
+      md5: ad5bccef624230f0307fd1635ced2f4a
+      size: 217
     - path: data/reports/shap_beeswarm.png
       hash: md5
-      md5: 2bbd395127f2c96ed203feb37511ff37
-      size: 93988
+      md5: 339a3585cac440f584efc93af7ef52e4
+      size: 91465
     - path: data/reports/shap_plot_bar.png
       hash: md5
-      md5: 78968eb97ece711622d41f5b61095288
-      size: 42864
+      md5: e2c26485eff35befa33d4edcdf77ee63
+      size: 43205

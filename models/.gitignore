@@ -1,2 +1,5 @@
 /model.joblib
 /cross_val_score.csv
+/cross_val_pred_train_df.csv
+/test_df_w_pred.csv
+/cross_val_pred.csv

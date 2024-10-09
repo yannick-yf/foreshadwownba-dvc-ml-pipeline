@@ -6,6 +6,7 @@
 #TODO: Save model - DONE
 #TODO: Evaluation step -DONE
 #TODO: Visualisation via dvc plot tracking - DONE
+#TODO: Save in train CV and Test with id and prediction
 
 vars:
   - project:
@@ -86,6 +87,7 @@ stages:
       outs:
         - ./models/model.joblib
         - ./models/cross_val_score.csv
+        - ./models/cross_val_pred.csv
   evaluate:
       cmd: python3 -m src.evaluate --config=params.yaml
       deps:
@@ -96,6 +98,8 @@ stages:
         - train
         - data_split
         - evaluate
+      outs:
+        - './models/test_df_w_pred.csv'
       plots:
           #- data/reports/regression_plot.png
           - data/reports/shap_beeswarm.png

@@ -5,6 +5,7 @@
 import os
 from pathlib import Path
 import pandas as pd
+import numpy as np
 import boto3
 
 # Machine Learning package
@@ -19,15 +20,8 @@ import os
 # from src.stages.visualization import plot_regression_pred_actual
 from src.utils.logs import get_logger
 from sklearn.metrics import (
-    make_scorer,
-    confusion_matrix,
-    classification_report,
     precision_score,
-    f1_score,
-    accuracy_score,
-    recall_score,
-    roc_curve,
-    auc)
+    accuracy_score)
 
 import json
 import joblib
@@ -41,6 +35,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 logger = get_logger("EVALUATION_STEP", log_level="INFO")
+
+def rename_opponent_columns(training_df: pd.DataFrame) -> pd.DataFrame:
+    """ 
+    """
+    training_df.columns = training_df.columns.str.replace('_y', '_opp')
+    training_df.columns = training_df.columns.str.replace('_x', '')
+
+    return training_df
 
 def write_plot_regression_data(y_true, predicted, filename):
     """
@@ -106,21 +108,78 @@ def evaluate(config_path: Text) -> pd.DataFrame:
     y_test = test_df.loc[:, target_column].values
     X_test = test_df.drop(list_columns_to_delete, axis=1).values
 
-    prediction = model.predict(X_test)
+    prediction_value = model.predict(X_test)
 
-    evaluation_precision = precision_score(y_test, prediction)
-    evaluation_accuracy = accuracy_score(y_test, prediction)
+    #----------------------------------------------------
+    # Get the proba to get the Metric evaluation per game
+    # We will comapre proba to win from team 1 vs team 2
+    # It leads to have 1 lign per game
+    prediction_proba = model.predict_proba(X_test)
+    prediction_proba_df = pd.DataFrame(prediction_proba)
+    prediction_proba_df.columns = ['prediction_proba_df_0', 'prediction_proba_df_1']
+    
+    test_df_w_pred = test_df[[
+        target_column, 
+        group_cv_variable,
+        'id_season',	
+        'tm',	
+        'opp',
+        ]]
+    
+    test_df_w_pred['prediction_proba_df_0'] = prediction_proba_df['prediction_proba_df_0']
+    test_df_w_pred['prediction_proba_df_1'] = prediction_proba_df['prediction_proba_df_1']
+    test_df_w_pred['prediction_value'] = prediction_value
 
-    logger.info(f"EVALUATION PRECISION: {round(evaluation_precision, 3)};")
-    logger.info(f"EVALUATION ACCURACY: {round(evaluation_accuracy, 3)};")
+    test_df_w_pred.to_csv('./models/test_df_w_pred.csv', index=False)
+
+    test_df_w_pred = test_df_w_pred.rename(columns={
+        "prediction_proba_df_0": "prediction_proba_df_loose", 
+        "prediction_proba_df_1": "prediction_proba_df_win"})
+
+    opponent_features = ['id', 'tm' ,'opp', 'prediction_proba_df_loose', 'prediction_proba_df_win']
+
+    test_df_w_pred_opp = test_df_w_pred[opponent_features]
+
+    test_df_w_pred = pd.merge(
+        test_df_w_pred,
+        test_df_w_pred_opp,
+        how='left',
+        left_on=['id', 'tm' ,'opp'],
+        right_on=['id', 'opp', 'tm']
+        )
+
+    test_df_w_pred = rename_opponent_columns(test_df_w_pred)
+
+    test_df_w_pred['pred_results_1_line_game'] = np.where(
+        test_df_w_pred['prediction_proba_df_win'] > test_df_w_pred['prediction_proba_df_win_opp'], 
+        1, 
+        0)
+
+    test_df_w_pred = test_df_w_pred.drop_duplicates(subset=['id'], keep='first')
+
+    evaluation_one_line_per_game_precision = round(precision_score(test_df_w_pred['results'], test_df_w_pred['pred_results_1_line_game']),3)
+    evaluation_one_line_per_game_accuracy = round(accuracy_score(test_df_w_pred['results'], test_df_w_pred['pred_results_1_line_game']),3)
+
+    logger.info(f"EVALUATION 1 LINE PER GAME PRECISION: {round(evaluation_one_line_per_game_precision, 3)};")
+    logger.info(f"EVALUATION 2 LINE PER GAME ACCURACY: {round(evaluation_one_line_per_game_accuracy, 3)};")
+
+    #---------------------------------------------
+
+    evaluation_precision = precision_score(y_test, prediction_value)
+    evaluation_accuracy = accuracy_score(y_test, prediction_value)
+
+    logger.info(f"EVALUATION 2LINES PER GAME PRECISION: {round(evaluation_precision, 3)};")
+    logger.info(f"EVALUATION 2LINES PER GAME ACCURACY: {round(evaluation_accuracy, 3)};")
 
     report = {
         "cv_accuracy": round(cv_accuracy, 3),
         "cv_precision": round(cv_precision, 3),
-        "evaluation_accuracy": round(evaluation_accuracy, 3),
-        "evaluation_precision": round(evaluation_precision, 3),
+        "evaluation_2lg_accuracy": round(evaluation_accuracy, 3),
+        "evaluation_2lg_precision": round(evaluation_precision, 3),
+        "evaluation_1lg_accuracy": round(evaluation_one_line_per_game_accuracy, 3),
+        "evaluation_1lg_precision": round(evaluation_one_line_per_game_precision, 3),
         "actual": y_test,
-        "predicted": prediction,
+        "predicted": prediction_value,
     }
 
     logger.info("Save metrics")
@@ -130,8 +189,10 @@ def evaluate(config_path: Text) -> pd.DataFrame:
             obj={
                 "accuracy_cv_score": report["cv_accuracy"],
                 "precision_cv_score": report["cv_precision"],
-                "accuracy_evaluation_score": report["evaluation_accuracy"],
-                "precision_evaluation_score": report["evaluation_precision"],
+                "accuracy_2lg_evaluation_score": report["evaluation_2lg_accuracy"],
+                "precision_2lg_evaluation_score": report["evaluation_2lg_precision"],
+                "accuracy_1lg_evaluation_score": report["evaluation_1lg_accuracy"],
+                "precision_1lg_evaluation_score": report["evaluation_1lg_precision"],
             },
             fp=fp,
         )
@@ -139,9 +200,6 @@ def evaluate(config_path: Text) -> pd.DataFrame:
     logger.info(f"Accuracy & Precision metrics file saved to : {'data/reports/metrics.json'}")
 
     # Save shape value plot
-    # Shape value framework
-    # explain the model's predictions using SHAP
-    # (same syntax works for LightGBM, CatBoost, scikit-learn, transformers, Spark, etc.)
     explainer = shap.Explainer(model)
     shap_values = explainer(train_df.drop(list_columns_to_delete, axis=1))
 
