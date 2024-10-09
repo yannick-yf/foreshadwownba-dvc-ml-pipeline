@@ -116,6 +116,5 @@ def train_cross_val(
     # Train the model with the best params - for now only one set of params
     estimator.fit(X_train, y_train)
 
-
     return scores, estimator
 

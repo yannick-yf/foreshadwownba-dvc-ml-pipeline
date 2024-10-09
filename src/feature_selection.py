@@ -36,21 +36,11 @@ def feature_selection(config_path: Path) -> pd.DataFrame:
     #---------------------------------------------
     # Feature Selection
 
-    list_column_to_select = [
-        'results',
-        'id', 
-        'id_season',
-        'tm', 
-        'opp',
-        # 'game_nb', 
-        'before_average_W_ratio',
-        'before_average_W_ratio_opp',
-        'extdom_ext'
-        ]
+    list_features_to_select = config_params['feature_selection']['list_features_to_select']
 
-    train_dataset_fs = train_df[list_column_to_select]
+    train_dataset_fs = train_df[list_features_to_select]
     
-    test_dataset_fs = test_df[list_column_to_select]
+    test_dataset_fs = test_df[list_features_to_select]
 
     logger.info("Save train and test sets")
 

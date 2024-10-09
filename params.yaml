@@ -17,6 +17,24 @@ initial_multiple_models_training:
   random_state: 21
   cross_validation_n_splits: 10
 
+feature_selection:
+  list_features_to_select:
+    - results
+    - id
+    - id_season
+    - tm
+    - opp
+    #- game_nb
+    - before_average_W_ratio
+    - before_average_W_ratio_opp
+    - extdom_ext
+    - before_ratio_win_ext
+    - before_ratio_win_dom
+    - rest
+    - before_average_pts_tm
+    - before_average_pts_opp
+    # - before_streak_w_l
+
 train:
   top_3_models: data/processed/top_3_models.csv
   model_name: Extreme Gradient Boosting

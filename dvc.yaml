@@ -4,9 +4,8 @@
 #TODO: Init multiple model training - DONE
 #TODO: Training model DONE - Only Xgboost for now
 #TODO: Save model - DONE
-
-#TODO: Evaluation step
-#TODO: Visualisation via dvc plot tracking
+#TODO: Evaluation step -DONE
+#TODO: Visualisation via dvc plot tracking - DONE
 
 vars:
   - project:
@@ -56,6 +55,7 @@ stages:
       - get_training_dataset
       - data_split
       - dummy_classifier
+      - feature_selection
     outs:
       - ./data/processed/train_dataset_fs.csv
       - ./data/processed/test_dataset_fs.csv
