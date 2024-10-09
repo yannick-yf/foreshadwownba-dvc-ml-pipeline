@@ -1,12 +1,5 @@
-#TODO: Dummy Classifier - DONE
-#TODO: Baseline Classifier - DONE
-#TODO: Feature selction methods - Manual one for now  - Done
-#TODO: Init multiple model training - DONE
-#TODO: Training model DONE - Only Xgboost for now
-#TODO: Save model - DONE
-#TODO: Evaluation step -DONE
-#TODO: Visualisation via dvc plot tracking - DONE
-#TODO: Save in train CV and Test with id and prediction
+#TODO: Add Barplot vizualisation from metrics we want to expose
+#TODO: Add feature seelction packager
 
 vars:
   - project:
