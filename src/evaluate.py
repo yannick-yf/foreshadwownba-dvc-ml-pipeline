@@ -126,8 +126,8 @@ def evaluate(config_path: Text) -> pd.DataFrame:
         'opp',
         ]]
     
-    test_df_w_pred['prediction_proba_df_0'] = prediction_proba_df['prediction_proba_df_0']
-    test_df_w_pred['prediction_proba_df_1'] = prediction_proba_df['prediction_proba_df_1']
+    test_df_w_pred['prediction_proba_df_0'] = prediction_proba_df['prediction_proba_df_0'].copy()
+    test_df_w_pred['prediction_proba_df_1'] = prediction_proba_df['prediction_proba_df_1'].copy()
     test_df_w_pred['prediction_value'] = prediction_value
 
     test_df_w_pred.to_csv('./models/test_df_w_pred.csv', index=False)

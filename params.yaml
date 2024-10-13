@@ -6,6 +6,17 @@ base:
 get_training_dataset:
   training_dataset: data/input/nba_training_dataset.csv
 
+data_process:
+  training_dataset_processed: data/processed/nba_training_dataset_processed.csv
+  list_column_to_drop:
+    - extdom
+    - week_weekend
+    - last_game_overtime
+    - tm_opp 
+    - opp_opp
+    - pts_tm
+    - pts_opp
+
 data_split:
   split_ratio: 0.15
   group_cv_variable: id
@@ -15,16 +26,17 @@ dummy_classifier:
 
 initial_multiple_models_training:
   random_state: 21
-  cross_validation_n_splits: 10
+  cross_validation_n_splits: 5
 
 feature_selection:
-  list_features_to_select:
-    - results
-    - id
-    - id_season
-    - tm
-    - opp
-    #- game_nb
+  method: automatic # manual
+  list_nb_feature_to_select: "5/8/10"
+  rfe_step: 5
+  cross_validation_n_splits: 3
+  random_state: 21
+  features_to_force:
+  list_manual_features_to_select:
+    - game_nb
     - before_average_W_ratio
     - before_average_W_ratio_opp
     - extdom_ext
@@ -33,17 +45,17 @@ feature_selection:
     - rest
     - before_average_pts_tm
     - before_average_pts_opp
-    # - before_streak_w_l
+    - before_streak_w_l
 
 train:
   top_3_models: data/processed/top_3_models.csv
   model_name: Extreme Gradient Boosting
-  cross_validation_n_splits: 10
+  cross_validation_n_splits: 5
   scoring_metric: accuracy
   param_grid:
-    max_depth: 2
+    max_depth: 5
     n_estimators: 750
-    learning_rate: 0.05
+    learning_rate: 0.01
 
 evaluate:
   metrics_path: data/reports/metrics.json

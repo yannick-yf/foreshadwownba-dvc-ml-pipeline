@@ -73,7 +73,6 @@ def train(config_path: Text) -> pd.DataFrame:
     logger.info(f"CV ACCURACY: {cv_accuracy};")
     logger.info(f"CV PRECISION: {cv_precision};")
 
-
     cross_val_pred_train_df.to_csv('./models/cross_val_pred.csv', index=False)
     cross_val_scores_df.to_csv('./models/cross_val_score.csv', index=False)
 

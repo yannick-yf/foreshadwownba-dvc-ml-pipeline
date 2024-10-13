@@ -22,6 +22,9 @@ kaleido = "0.2.1"
 joblib = "1.3.2"
 shap = "*"
 xgboost = "*"
+auto-feat-ml = "*"
+mlxtend = "0.23.*"
+feature_engine = "1.6.*"
 
 [tool.poetry.dev-dependencies]
 coverage = {extras = ["toml"], version = "6.5.*"}

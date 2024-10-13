@@ -168,8 +168,8 @@ def get_predicted_values_from_cross_val(
     y_cv_pred_proba_df = pd.DataFrame(y_cv_pred_proba)
     y_cv_pred_proba_df.columns = ['y_cv_pred_0', 'y_cv_pred_1']
 
-    train_w_cv_pred['y_cv_pred_0'] = y_cv_pred_proba_df['y_cv_pred_0']
-    train_w_cv_pred['y_cv_pred_1'] = y_cv_pred_proba_df['y_cv_pred_1']
+    train_w_cv_pred['y_cv_pred_0'] = y_cv_pred_proba_df['y_cv_pred_0'].copy()
+    train_w_cv_pred['y_cv_pred_1'] = y_cv_pred_proba_df['y_cv_pred_1'].copy()
     train_w_cv_pred['y_cv_pred_results'] = y_cv_pred_results
 
     return train_w_cv_pred

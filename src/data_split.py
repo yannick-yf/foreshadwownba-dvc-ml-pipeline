@@ -25,7 +25,7 @@ def data_split(config_path: Text) -> None:
         log_level=config['base']['log_level'])
     
     dataset = pd.read_csv(
-        config['get_training_dataset']['training_dataset']
+        config['data_process']['training_dataset_processed']
         )
     
     #--------------------------------

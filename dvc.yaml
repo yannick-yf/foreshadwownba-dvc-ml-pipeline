@@ -15,11 +15,22 @@ stages:
       - get_training_dataset
     outs:
       - ./data/input/nba_training_dataset.csv
+  data_process:
+    cmd: python -m src.data_process --config=params.yaml
+    deps:
+      - src/data_process.py
+      - ./data/input/nba_training_dataset.csv
+    params:
+      - base
+      - get_training_dataset
+      - data_process
+    outs:
+      - ./data/processed/nba_training_dataset_processed.csv
   data_split:
     cmd: python -m src.data_split --config=params.yaml
     deps:
       - src/data_split.py
-      - ./data/input/nba_training_dataset.csv
+      - ./data/processed/nba_training_dataset_processed.csv
     params:
       - base
       - get_training_dataset
@@ -53,6 +64,7 @@ stages:
     outs:
       - ./data/processed/train_dataset_fs.csv
       - ./data/processed/test_dataset_fs.csv
+      - ./data/processed/columns_selected.csv
   initial_multiple_models_training:
       cmd: python -m src.initial_multiple_models_training --config=params.yaml 
       deps:
