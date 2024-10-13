@@ -30,7 +30,7 @@ initial_multiple_models_training:
 
 feature_selection:
   method: automatic # manual
-  list_nb_feature_to_select: "5/8/10"
+  list_nb_feature_to_select: "2/3/4"
   rfe_step: 5
   cross_validation_n_splits: 3
   random_state: 21
@@ -40,12 +40,6 @@ feature_selection:
     - before_average_W_ratio
     - before_average_W_ratio_opp
     - extdom_ext
-    - before_ratio_win_ext
-    - before_ratio_win_dom
-    - rest
-    - before_average_pts_tm
-    - before_average_pts_opp
-    - before_streak_w_l
 
 train:
   top_3_models: data/processed/top_3_models.csv
