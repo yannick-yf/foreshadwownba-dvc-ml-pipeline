@@ -6,3 +6,4 @@ https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9764182/
 
 MLOPS with dvc poetry and cml:
 https://www.osedea.com/insight/dataops-mlops-article
+https://www.osedea.com/insight/dataops-mlops-article

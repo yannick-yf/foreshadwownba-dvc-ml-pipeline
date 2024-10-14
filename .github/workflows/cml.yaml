@@ -19,10 +19,8 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-root
       - uses: iterative/setup-cml@v2
-      - name: Activate env
-        run: poetry shell
       - name: Train model
-        run: dvc repro
+        run: poetry run dvc repro
       - name: Create CML report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
