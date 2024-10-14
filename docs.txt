@@ -4,3 +4,5 @@ https://digitalcommons.bryant.edu/cgi/viewcontent.cgi?article=1000&context=honor
 # Accuracy of 75%
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9764182/
 
+MLOPS with dvc poetry and cml:
+https://www.osedea.com/insight/dataops-mlops-article
