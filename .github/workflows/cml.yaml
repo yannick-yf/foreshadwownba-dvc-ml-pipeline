@@ -21,7 +21,7 @@ jobs:
       - uses: iterative/setup-cml@v2
       - name: Train model
         run: |
-          make run
+          dvc repro
       - name: Create CML report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
