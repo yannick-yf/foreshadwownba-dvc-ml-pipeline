@@ -10,6 +10,7 @@ import boto3
 
 # Machine Learning package
 from sklearn.model_selection import GroupKFold
+from sklearn.metrics import ConfusionMatrixDisplay
 
 from typing import Text
 import yaml
@@ -199,6 +200,15 @@ def evaluate(config_path: Text) -> pd.DataFrame:
 
     logger.info(f"Accuracy & Precision metrics file saved to : {'data/reports/metrics.json'}")
 
+    # ConfusionMatrixDisplay
+    disp = ConfusionMatrixDisplay.from_predictions(
+        test_df_w_pred[target_column], 
+        test_df_w_pred['prediction_value'], 
+        normalize="true", 
+        cmap=plt.cm.Blues
+        )
+    plt.savefig("./data/reports/ConfusionMatrix.png")
+
     # Save shape value plot
     explainer = shap.Explainer(model)
     shap_values = explainer(train_df.drop(list_columns_to_delete, axis=1))
@@ -215,9 +225,6 @@ def evaluate(config_path: Text) -> pd.DataFrame:
     logger.info(
         f"Shap plots saved to : {shap_beeswarm_path, './data/reports/shap_plot_bar.png' }"
     )
-
-    # regression_data_path = './data/reports/regression_plot_data.csv'
-    # write_plot_regression_data(y_test, prediction, filename=regression_data_path)
 
     logger.info("Evaluate Step Done")
 

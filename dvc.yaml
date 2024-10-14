@@ -106,13 +106,9 @@ stages:
       outs:
         - './models/test_df_w_pred.csv'
       plots:
-          #- data/reports/regression_plot.png
+          - data/reports/ConfusionMatrix.png
           - data/reports/shap_beeswarm.png
           - data/reports/shap_plot_bar.png
-          # - data/reports/regression_plot_data.csv:
-          #     template: scatter
-          #     x: predicted
-          #     y: y_true
       metrics:
       - data/reports/metrics.json:
           cache: false
