@@ -22,9 +22,7 @@ jobs:
       - name: Activate env
         run: poetry shell
       - name: Train model
-        run: |
-          poetry shell
-          dvc repro
+        run: dvc repro
       - name: Create CML report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
