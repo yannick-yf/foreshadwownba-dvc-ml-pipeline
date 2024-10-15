@@ -5,5 +5,8 @@ https://digitalcommons.bryant.edu/cgi/viewcontent.cgi?article=1000&context=honor
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9764182/
 
 MLOPS with dvc poetry and cml:
-https://www.osedea.com/insight/dataops-mlops-article
-https://www.osedea.com/insight/dataops-mlops-article
+https://www.osedea.com/insight/dataops-mlops-articles
+
+# github action
+https://github.com/orgs/community/discussions/60820
+To makoe it work I went to settings of the repo and in the Action section I change and give action workflow read and writte permissions

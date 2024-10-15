@@ -3,11 +3,7 @@ on: [push]
 jobs:
   train-and-report:
     runs-on: ubuntu-latest
-    # container: docker://ghcr.io/iterative/cml:0-dvc2-base1
     steps:
-      - uses: actions/checkout@v4
-      #   with:
-      #     ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/checkout@v4
       - name: Install Poetry
         run: pipx install poetry
@@ -26,5 +22,5 @@ jobs:
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "![](./ConfusionMatrix.png)" >> report.md
+          echo "![](./data/reports/ConfusionMatrix.png)" >> report.md
           cml comment create report.md
