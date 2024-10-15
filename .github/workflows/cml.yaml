@@ -19,11 +19,12 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-root
       - uses: iterative/setup-cml@v2
-      - name: Pipeline Run
+      - name: Train model
         run: |
           poetry run dvc repro
-          echo "![](./ConfusionMatrix.png)" >> report.md
-          cml comment create report.md
+      - name: Create CML report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+        run: |
+          echo "![](./ConfusionMatrix.png)" >> report.md
+          cml comment create report.md
