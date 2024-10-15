@@ -26,6 +26,5 @@ jobs:
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "\`\`\`" > report.md
           echo "![](./data/reports/ConfusionMatrix.png)" >> report.md
           cml comment create report.md

@@ -55,7 +55,7 @@ def get_training_dataset(config_path: Path) -> pd.DataFrame:
 
     training_set = config_params["get_training_dataset"]["training_dataset"]
 
-    nba_training_dataset.to_csv(
+    nba_training_dataset.head(2500).to_csv(
         training_set, index=False
     )
 
