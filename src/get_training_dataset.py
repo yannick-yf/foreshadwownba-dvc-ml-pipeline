@@ -36,9 +36,9 @@ def get_training_dataset(config_path: Path) -> pd.DataFrame:
 
     nba_training_dataset = pd.read_csv("./nba_training_dataset.csv")
 
-    # logger = get_logger(
-    #     "DOWNLOAD_TRAINING_DATA_FROM_DATABASE", log_level=config_params["base"]["log_level"]
-    # )
+    logger = get_logger(
+        "DOWNLOAD_TRAINING_DATA_FROM_DATABASE", log_level=config_params["base"]["log_level"]
+    )
 
     # engine = create_engine(
     #     f"mysql+pymysql://{os.getenv('MYSQL_USERNAME')}:{os.getenv('MYSQL_PASSWORD')}"
