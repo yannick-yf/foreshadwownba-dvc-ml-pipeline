@@ -21,7 +21,6 @@ jobs:
       - uses: iterative/setup-cml@v2
       - name: Train model
         run: |
-          poetry run dvc pull data --run-cache 
           poetry run dvc repro
       - name: Create CML report
         env:
