@@ -34,22 +34,24 @@ def get_training_dataset(config_path: Path) -> pd.DataFrame:
     # Loading variables from the .env file
     load_dotenv()
 
-    logger = get_logger(
-        "DOWNLOAD_TRAINING_DATA_FROM_DATABASE", log_level=config_params["base"]["log_level"]
-    )
+    nba_training_dataset = pd.read_csv("./nba_training_dataset.csv")
 
-    engine = create_engine(
-        f"mysql+pymysql://{os.getenv('MYSQL_USERNAME')}:{os.getenv('MYSQL_PASSWORD')}"
-        f"@{os.getenv('MYSQL_HOST')}/{os.getenv('MYSQL_DATABASE')}"
-    )
+    # logger = get_logger(
+    #     "DOWNLOAD_TRAINING_DATA_FROM_DATABASE", log_level=config_params["base"]["log_level"]
+    # )
 
-    nba_training_dataset = pd.read_sql(
-        """
-        SELECT *
-        FROM foreshadwownba.training_dataset;
-        """,
-        engine,
-    )
+    # engine = create_engine(
+    #     f"mysql+pymysql://{os.getenv('MYSQL_USERNAME')}:{os.getenv('MYSQL_PASSWORD')}"
+    #     f"@{os.getenv('MYSQL_HOST')}/{os.getenv('MYSQL_DATABASE')}"
+    # )
+
+    # nba_training_dataset = pd.read_sql(
+    #     """
+    #     SELECT *
+    #     FROM foreshadwownba.training_dataset;
+    #     """,
+    #     engine,
+    # )
 
     training_set = config_params["get_training_dataset"]["training_dataset"]
 
