@@ -20,7 +20,9 @@ jobs:
         run: poetry install --no-root
       - uses: iterative/setup-cml@v2
       - name: Train model
-        run: poetry run dvc repro evaluate
+        run: |
+          poetry run dvc pull data --run-cache 
+          poetry run dvc repro
       - name: Create CML report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
