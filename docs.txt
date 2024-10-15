@@ -10,3 +10,9 @@ https://www.osedea.com/insight/dataops-mlops-articles
 # github action
 https://github.com/orgs/community/discussions/60820
 To makoe it work I went to settings of the repo and in the Action section I change and give action workflow read and writte permissions
+
+DVC CML And airlfow
+https://datachain.ai/blog/automate-your-ml-pipeline-combining-airflow-dvc-and-cml-for-a-seamless-batch-scoring-experience
+
+cml with dvc
+https://cml.dev/doc/cml-with-dvc
