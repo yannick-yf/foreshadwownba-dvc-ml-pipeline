@@ -208,6 +208,7 @@ def evaluate(config_path: Text) -> pd.DataFrame:
         cmap=plt.cm.Blues
         )
     plt.savefig("./data/reports/ConfusionMatrix.png")
+    plt.savefig("./ConfusionMatrix.png")
 
     # Save shape value plot
     explainer = shap.Explainer(model)
