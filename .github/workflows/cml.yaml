@@ -22,7 +22,7 @@ jobs:
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "## Report" >> report.md
+          echo "## Metrics Report" >> report.md
           dvc metrics diff main --show-md >> report.md
           echo "## Plot" >> report.md
           echo "![](./data/reports/ConfusionMatrix.png)" >> report.md
