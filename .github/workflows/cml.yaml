@@ -24,7 +24,7 @@ jobs:
         run: |
           echo "## Metrics Report" >> report.md
           git fetch --prune
-          poetry run dvc metrics diff main >> report.md
+          poetry run dvc metrics diff main --md >> report.md
           echo "## Plot" >> report.md
           echo "![](./data/reports/ConfusionMatrix.png)" >> report.md
 
