@@ -53,7 +53,5 @@ train:
 
 evaluate:
   metrics_path: data/reports/metrics.json
-  # regression_plot: regression_plot.png
   shap_beeswarm_image: shap_beeswarm.png
   shap_plot_bar_image: shap_plot_bar.png
-  # regression_plot_data: regression_plot_data.csv

@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import boto3
+import json
 
 # Machine Learning package
 from sklearn.model_selection import GroupKFold
@@ -45,20 +46,21 @@ def rename_opponent_columns(training_df: pd.DataFrame) -> pd.DataFrame:
 
     return training_df
 
-def write_plot_regression_data(y_true, predicted, filename):
-    """
-    Write the true and predicted values of a regression model to a CSV file.
+def write_bar_plot_df_from_json(report: dict, filename: str) -> pd.DataFrame:
+    bar_plot_data = pd.json_normalize(report)
+    bar_plot_data = pd.DataFrame(
+        bar_plot_data[
+            [
+                'cv_accuracy',
+                'evaluation_2lg_accuracy',
+                'evaluation_1lg_accuracy',
+                'eval_vs_baseline_accuracy'
+            ]
+        ].T
+    ).reset_index()
 
-    Args:
-        y_true (list): The true values of the target variable.
-        predicted (list): The predicted values of the target variable.
-        filename (str): The name of the CSV file to write the data to.
-    """
-    assert len(predicted) == len(y_true)
-    reg_plot = pd.DataFrame(
-        list(zip(y_true, predicted)), columns=["y_true", "predicted"]
-    )
-    reg_plot.to_csv(filename, index=False)
+    bar_plot_data.columns = ["name", "metric_value"]
+    bar_plot_data.to_csv(filename, index=False)
 
 def evaluate(config_path: Text) -> pd.DataFrame:
     """Load raw data.
@@ -172,6 +174,11 @@ def evaluate(config_path: Text) -> pd.DataFrame:
     logger.info(f"EVALUATION 2LINES PER GAME PRECISION: {round(evaluation_precision, 3)};")
     logger.info(f"EVALUATION 2LINES PER GAME ACCURACY: {round(evaluation_accuracy, 3)};")
 
+    logger.info("Load Baseline dataset")
+    # Open and read the JSON file
+    with open('data/reports/baseline_classifier_metrics.json', 'r') as file:
+        baseline_classifier_metrics = json.load(file)
+
     report = {
         "cv_accuracy": round(cv_accuracy, 3),
         "cv_precision": round(cv_precision, 3),
@@ -179,6 +186,8 @@ def evaluate(config_path: Text) -> pd.DataFrame:
         "evaluation_2lg_precision": round(evaluation_precision, 3),
         "evaluation_1lg_accuracy": round(evaluation_one_line_per_game_accuracy, 3),
         "evaluation_1lg_precision": round(evaluation_one_line_per_game_precision, 3),
+        "eval_vs_baseline_accuracy": round(evaluation_accuracy - baseline_classifier_metrics['baseline_accuracy'], 3),
+        "eval_vs_baseline_precision": round(evaluation_precision - baseline_classifier_metrics['baseline_precision'],3),
         "actual": y_test,
         "predicted": prediction_value,
     }
@@ -194,11 +203,17 @@ def evaluate(config_path: Text) -> pd.DataFrame:
                 "precision_2lg_evaluation_score": report["evaluation_2lg_precision"],
                 "accuracy_1lg_evaluation_score": report["evaluation_1lg_accuracy"],
                 "precision_1lg_evaluation_score": report["evaluation_1lg_precision"],
+                "eval_vs_baseline_accuracy": report["eval_vs_baseline_accuracy"],
+                "eval_vs_baseline_precision": report["eval_vs_baseline_precision"],
             },
             fp=fp,
         )
 
     logger.info(f"Accuracy & Precision metrics file saved to : {'data/reports/metrics.json'}")
+
+    # Accurcay Barplot - Report Data Processing for the plot:
+    bar_plot_data_path = "./data/reports/bar_plot_data.csv"
+    write_bar_plot_df_from_json(report, bar_plot_data_path)
 
     # ConfusionMatrixDisplay
     disp = ConfusionMatrixDisplay.from_predictions(

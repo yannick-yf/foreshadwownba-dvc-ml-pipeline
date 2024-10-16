@@ -18,7 +18,7 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 import sys
-
+import json
 from src.utils.logs import get_logger
 
 def dummy_and_baseline_classifier(config_path: Text) -> None:
@@ -81,6 +81,29 @@ def dummy_and_baseline_classifier(config_path: Text) -> None:
     logger.info(f"Baseline Specificity: {specificity_metric}")
     logger.info(f"Baseline Recall: {recall_metric}")
     logger.info(f"Baseline F1: {f1_metric}")
+
+    report = {
+        "baseline_accuracy": round(accuracy_metric, 3),
+        "baseline_precision": round(precision_metric, 3),
+        "baseline_specificity": round(specificity_metric, 3),
+        "baseline_recall": round(recall_metric, 3),
+        "baseline_f1": round(f1_metric, 3)
+    }
+
+    logger.info("Save metrics")
+
+    with open('data/reports/baseline_classifier_metrics.json', "w", encoding="utf-8") as fp:
+        json.dump(
+            obj={
+                "baseline_accuracy": report["baseline_accuracy"],
+                "baseline_precision": report["baseline_precision"],
+                "baseline_specificity": report["baseline_specificity"],
+                "baseline_recall": report["baseline_recall"],
+                "baseline_f1": report["baseline_f1"]
+            },
+            fp=fp,
+        )
+
 
 if __name__ == '__main__':
 

@@ -49,6 +49,8 @@ stages:
       - get_training_dataset
       - data_split
       - dummy_classifier
+    outs:
+      - ./data/reports/baseline_classifier_metrics.json
   feature_selection:
     cmd: python -m src.feature_selection --config=params.yaml
     deps:
@@ -98,6 +100,7 @@ stages:
       deps:
         - src/evaluate.py
         - ./models/cross_val_score.csv
+        - ./data/reports/baseline_classifier_metrics.json
       params:
         - base
         - train
@@ -109,6 +112,10 @@ stages:
           - data/reports/ConfusionMatrix.png
           - data/reports/shap_beeswarm.png
           - data/reports/shap_plot_bar.png
+          - data/reports/bar_plot_data.csv:
+              template: bar_horizontal
+              x: metric_value
+              y: name
       metrics:
       - data/reports/metrics.json:
           cache: false
