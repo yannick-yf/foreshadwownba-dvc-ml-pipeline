@@ -23,6 +23,7 @@ jobs:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "## Metrics Report" >> report.md
+          git fetch --prune
           poetry run dvc metrics diff main >> report.md
           echo "## Plot" >> report.md
           echo "![](./data/reports/ConfusionMatrix.png)" >> report.md
