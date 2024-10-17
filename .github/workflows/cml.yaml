@@ -26,8 +26,7 @@ jobs:
           git fetch --prune
           poetry run dvc metrics diff main --md >> report.md
           echo "## Training Plots" >> report.md
-          poetry run dvc plots show > vega.json
-          vl2png vega.json > plot.png
+          poetry run dvc plots show > plot.png
           echo '![](./plot.png "Training Plots")' >> report.md
 
           echo "## Plots" >> report.md
