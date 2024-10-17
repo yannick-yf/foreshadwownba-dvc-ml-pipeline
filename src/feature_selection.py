@@ -3,18 +3,16 @@ Feature Selection Step
 """
 
 import argparse
-import os
 from pathlib import Path
 
 import pandas as pd
 import yaml
-from src.utils.logs import get_logger
-
 from sklearn.model_selection import GroupKFold
 
 from auto_feat_ml import FeatureSelection
 from auto_feat_ml.data_models.feature_model import FeatureIn
 
+from src.utils.logs import get_logger
 
 def feature_selection(config_path: Path) -> pd.DataFrame:
     """

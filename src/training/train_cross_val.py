@@ -1,27 +1,14 @@
 """Train model with cross validation."""
 
 import pandas as pd
-import numpy as np
-
-from sklearn.metrics import (
-    make_scorer,
-    confusion_matrix,
-    classification_report,
-    precision_score,
-    f1_score,
-    accuracy_score,
-    recall_score,
-    roc_curve,
-    auc,
-)
-
-from sklearn.model_selection import GroupKFold
-from sklearn.model_selection import cross_validate, cross_val_predict
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    make_scorer,
+    precision_score,
+)
+from sklearn.model_selection import GroupKFold, cross_validate, cross_val_predict
 from xgboost import XGBClassifier
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.compose import ColumnTransformer
-
 
 class UnsupportedClassifier(Exception):
     """Exception raised for unsupported classifiers.

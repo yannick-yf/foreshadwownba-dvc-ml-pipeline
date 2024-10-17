@@ -1,33 +1,24 @@
 """Dummy Classifier"""
 
-import os
-from pathlib import Path
-import pandas as pd
+
 import argparse
+import json
 from typing import Text
-import yaml
-from decouple import config
+
 import numpy as np
+import pandas as pd
+import yaml
 from sklearn.dummy import DummyClassifier
 from sklearn.metrics import confusion_matrix
-from sklearn.metrics import classification_report
-from sklearn.metrics import precision_score
-from sklearn.metrics import f1_score
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import recall_score
-from sklearn.metrics import roc_curve
-from sklearn.metrics import auc
-import sys
-import json
-from src.utils.logs import get_logger
 
+from src.utils.logs import get_logger
 
 def dummy_and_baseline_classifier(config_path: Text) -> None:
     """Load raw data.
     Args:
         config_path {Text}: path to config
     """
-    with open("params.yaml") as conf_file:
+    with open(config_path) as conf_file:
         config = yaml.safe_load(conf_file)
 
     logger = get_logger("DUMMY_CLASSIFIER_STEP", log_level=config["base"]["log_level"])

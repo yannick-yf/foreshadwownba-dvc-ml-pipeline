@@ -1,24 +1,19 @@
-"""Data split"""
+"""Data Process"""
 
-import os
-from pathlib import Path
-import pandas as pd
 import argparse
 from typing import Text
+
+import pandas as pd
 import yaml
-from decouple import config
 
-
-from sklearn.model_selection import train_test_split
 from src.utils.logs import get_logger
-
 
 def data_process(config_path: Text) -> None:
     """Load raw data.
     Args:
         config_path {Text}: path to config
     """
-    with open("params.yaml") as conf_file:
+    with open(config_path) as conf_file:
         config = yaml.safe_load(conf_file)
 
     logger = get_logger("DATA_SPLIT_STEP", log_level=config["base"]["log_level"])
@@ -32,6 +27,9 @@ def data_process(config_path: Text) -> None:
     dataset_processed.to_csv(
         config["data_process"]["training_dataset_processed"], index=False
     )
+
+    logger.info("Training dataset processed and saved")
+
 
 
 if __name__ == "__main__":

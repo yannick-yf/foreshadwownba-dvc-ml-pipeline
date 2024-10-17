@@ -1,33 +1,23 @@
 """Pre Train Multiple models."""
 
-# https://machinelearningmastery.com/multi-output-regression-models-with-python/
-
-import os
-from pathlib import Path
-import pandas as pd
-import boto3
-
-# Machine Learning package
-from sklearn.model_selection import GroupKFold
-
-from typing import Text
-import yaml
 import argparse
-from decouple import config
-import os
-import sys
-from src.utils.logs import get_logger
+from typing import Text
+
+import pandas as pd
+import yaml
+from sklearn.model_selection import GroupKFold
 from pycaret.classification import *
 
-logger = get_logger("PRE_TRAIN_MULTIPLE_MODELS", log_level="INFO")
+from src.utils.logs import get_logger
 
+logger = get_logger("PRE_TRAIN_MULTIPLE_MODELS", log_level="INFO")
 
 def pre_train_multplie_models(config_path: Text) -> pd.DataFrame:
     """Load raw data.
     Args:
         config_path {Text}: path to config
     """
-    with open("params.yaml") as conf_file:
+    with open(config_path) as conf_file:
         config = yaml.safe_load(conf_file)
 
     # -----------------------------------------------

@@ -1,41 +1,20 @@
 """Pre Train Multiple models."""
 
-# https://machinelearningmastery.com/multi-output-regression-models-with-python/
-
-import os
-from pathlib import Path
-import pandas as pd
-import numpy as np
-import boto3
-import json
-
-# Machine Learning package
-from sklearn.model_selection import GroupKFold
-from sklearn.metrics import ConfusionMatrixDisplay
-
-from typing import Text
-import yaml
 import argparse
-from decouple import config
-import os
-
-# from src.stages.visualization import plot_regression_pred_actual
-from src.utils.logs import get_logger
-from sklearn.metrics import precision_score, accuracy_score
-
 import json
+from typing import Text
+
 import joblib
-
-import shap
 import matplotlib.pyplot as plt
-
+import numpy as np
 import pandas as pd
+import shap
+import yaml
+from sklearn.metrics import ConfusionMatrixDisplay, precision_score, accuracy_score
 
-# import shap
-import matplotlib.pyplot as plt
+from src.utils.logs import get_logger
 
 logger = get_logger("EVALUATION_STEP", log_level="INFO")
-
 
 def rename_opponent_columns(training_df: pd.DataFrame) -> pd.DataFrame:
     """ """
@@ -43,7 +22,6 @@ def rename_opponent_columns(training_df: pd.DataFrame) -> pd.DataFrame:
     training_df.columns = training_df.columns.str.replace("_x", "")
 
     return training_df
-
 
 def write_bar_plot_df_from_json(report: dict, filename: str) -> pd.DataFrame:
     bar_plot_data = pd.json_normalize(report)
@@ -67,7 +45,7 @@ def evaluate(config_path: Text) -> pd.DataFrame:
     Args:
         config_path {Text}: path to config
     """
-    with open("params.yaml") as conf_file:
+    with open(config_path) as conf_file:
         config = yaml.safe_load(conf_file)
 
     # -----------------------------------------------

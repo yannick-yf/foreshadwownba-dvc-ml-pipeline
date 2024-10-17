@@ -1,26 +1,14 @@
-import pandas as pd
-from typing import Text
-import yaml
-import argparse
-from decouple import config
-import os
-import pprint
+"""Training models"""
 
-from sklearn.ensemble import (
-    RandomForestRegressor,
-    ExtraTreesRegressor,
-    GradientBoostingRegressor,
-    AdaBoostRegressor,
-)
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.linear_model import LinearRegression, Ridge
-from sklearn.svm import SVR
-from sklearn.ensemble import RandomForestRegressor
+import argparse
+from typing import Text
+
 import joblib
+import pandas as pd
+import yaml
+
 from src.training.train_cross_val import train_cross_val
 from src.utils.logs import get_logger
-import json
-from sklearn.preprocessing import OneHotEncoder
 
 
 def train(config_path: Text) -> pd.DataFrame:
