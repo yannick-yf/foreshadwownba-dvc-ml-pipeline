@@ -25,7 +25,12 @@ jobs:
           echo "## Metrics Report" >> report.md
           git fetch --prune
           poetry run dvc metrics diff main --md >> report.md
-          echo "## Plot" >> report.md
+          echo "## Training Plots" >> report.md
+          poetry run dvc plots --show-vega main > vega.json
+          vl2png vega.json > plot.png
+          echo '![](./plot.png "Training Plots")' >> report.md
+
+          echo "## Plots" >> report.md
           echo "![](./data/reports/ConfusionMatrix.png)" >> report.md
 
           cml comment create report.md
