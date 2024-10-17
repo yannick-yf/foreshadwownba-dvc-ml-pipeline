@@ -6,15 +6,6 @@ vars:
       aws: cads-it
       directory: .
 stages:
-  get_training_dataset:
-    cmd: python3 -m src.get_training_dataset --config=params.yaml
-    deps:
-      - src/get_training_dataset.py
-    params:
-      - base
-      - get_training_dataset
-    outs:
-      - ./data/input/nba_training_dataset.csv
   data_process:
     cmd: python -m src.data_process --config=params.yaml
     deps:
