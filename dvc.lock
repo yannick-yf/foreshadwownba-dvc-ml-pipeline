@@ -295,8 +295,8 @@ stages:
     deps:
     - path: ./data/processed/nba_training_dataset_processed.csv
       hash: md5
-      md5: 91e24c89ad0d09178c4b573bb9878f61
-      size: 12097182
+      md5: b9fa88667d7bf3a4b1bcda38e97c526d
+      size: 369475
     - path: src/data_split.py
       hash: md5
       md5: eb3e48640dbac04b2ccd5bc7688a7c29
@@ -314,23 +314,23 @@ stages:
     outs:
     - path: ./data/processed/test_dataset.csv
       hash: md5
-      md5: 00d4172767ebf694326577838a50fa0d
-      size: 3997333
+      md5: ee4c809ca4777ca1e582d1889039d0dc
+      size: 122129
     - path: ./data/processed/train_dataset.csv
       hash: md5
-      md5: 813e23614b3d6a9519470b26e3bc21b8
-      size: 8101111
+      md5: 4d5e20bd3994ad956cd4ff6823d2ee15
+      size: 248608
   dummy_and_baseline_classifier:
     cmd: python -m src.dummy_and_baseline_classifier --config=params.yaml
     deps:
     - path: ./data/processed/test_dataset.csv
       hash: md5
-      md5: 00d4172767ebf694326577838a50fa0d
-      size: 3997333
+      md5: ee4c809ca4777ca1e582d1889039d0dc
+      size: 122129
     - path: ./data/processed/train_dataset.csv
       hash: md5
-      md5: 813e23614b3d6a9519470b26e3bc21b8
-      size: 8101111
+      md5: 4d5e20bd3994ad956cd4ff6823d2ee15
+      size: 248608
     - path: src/dummy_and_baseline_classifier.py
       hash: md5
       md5: d894ab72139d0e91e4b40a08f3329d7b
@@ -350,8 +350,8 @@ stages:
     outs:
     - path: ./data/reports/baseline_classifier_metrics.json
       hash: md5
-      md5: c2f3d2d4bae33f7310bdd42e0236b3bf
-      size: 135
+      md5: 7a77efbab00b2b8cfc0b3f30c8e57f3c
+      size: 136
   initial_multiple_models_training:
     cmd: python -m src.initial_multiple_models_training --config=params.yaml
     deps:
@@ -557,8 +557,8 @@ stages:
       size: 13050998
     - path: src/data_process.py
       hash: md5
-      md5: c701018158d0ddf0908a8af50caedd04
-      size: 1082
+      md5: 948331300ba9b4515e57fede4b4ed790
+      size: 1093
     params:
       params.yaml:
         base:
@@ -579,5 +579,5 @@ stages:
     outs:
     - path: ./data/processed/nba_training_dataset_processed.csv
       hash: md5
-      md5: 91e24c89ad0d09178c4b573bb9878f61
-      size: 12097182
+      md5: b9fa88667d7bf3a4b1bcda38e97c526d
+      size: 369475
