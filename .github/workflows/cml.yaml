@@ -27,9 +27,39 @@ jobs:
           poetry run dvc metrics diff main --md >> report.md
 
           echo "## Training Plots" >> report.md
-          poetry run dvc plots --show-vega >> vega.json
-          cmd vl2png vega.json > plot.png
-          echo '![](./plot.png "Training Loss")' >> report.md
+          poetry run name: CML & DVC
+on: [push]
+jobs:
+  train-and-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - uses: iterative/setup-cml@v1
+      - uses: iterative/setup-dvc@v1
+      - name: Train model
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        run: |
+          dvc pull data
+          pip install -r requirements.txt
+          dvc repro
+      - name: Create CML report
+        run: |
+          # Compare metrics to main
+          test $(git branch --show-current) == main || git fetch --depth=1 origin main:main 
+          dvc metrics diff --show-md main >> report.md
+
+          poetry run dvc plots diff \
+            --show-vega main > vega.json
+          vl2png vega.json > plot.png
+          echo '![](./plot.png "Training Plots")' >> report.md
 
           echo "## Plots" >> report.md
           echo "![](./data/reports/ConfusionMatrix.png)" >> report.md
