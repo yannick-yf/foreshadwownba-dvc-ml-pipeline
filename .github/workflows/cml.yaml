@@ -26,9 +26,8 @@ jobs:
           git fetch --prune
           poetry run dvc metrics diff main --md >> report.md
           echo "## Training Plots" >> report.md
-          poetry run dvc plots show > plot.png
-          echo '![](./plot.png "Training Plots")' >> report.md
-
+          poetry run dvc plots show >> report.md
+          
           echo "## Plots" >> report.md
           echo "![](./data/reports/ConfusionMatrix.png)" >> report.md
 
