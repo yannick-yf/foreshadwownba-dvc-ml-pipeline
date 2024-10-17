@@ -37,7 +37,8 @@ def get_training_dataset(config_path: Path) -> pd.DataFrame:
     nba_training_dataset = pd.read_csv("./nba_training_dataset.csv")
 
     logger = get_logger(
-        "DOWNLOAD_TRAINING_DATA_FROM_DATABASE", log_level=config_params["base"]["log_level"]
+        "DOWNLOAD_TRAINING_DATA_FROM_DATABASE",
+        log_level=config_params["base"]["log_level"],
     )
 
     # engine = create_engine(
@@ -55,9 +56,7 @@ def get_training_dataset(config_path: Path) -> pd.DataFrame:
 
     training_set = config_params["get_training_dataset"]["training_dataset"]
 
-    nba_training_dataset.to_csv(
-        training_set, index=False
-    )
+    nba_training_dataset.to_csv(training_set, index=False)
 
     logger.info("Download training dataset from the database is complete.")
 
