@@ -26,11 +26,6 @@ jobs:
           git fetch --prune
           poetry run dvc metrics diff main --md >> report.md
 
-          echo "## Training Plots" >> report.md
-          poetry run dvc plots diff --show-vega main > vega.json
-          vl2png vega.json > plot.png
-          echo '![](./plot.png "Training Loss")' >> report.md
-
           echo "## Plots" >> report.md
           echo "![](./data/reports/ConfusionMatrix.png)" >> report.md
 
