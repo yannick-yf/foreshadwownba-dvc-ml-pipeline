@@ -15,7 +15,7 @@ def train(config_path: dict) -> pd.DataFrame:
     Args:
         config_path {Text}: path to config
     """
-    with open(config_path, encoding='utf-8') as conf_file:
+    with open(config_path, encoding="utf-8") as conf_file:
         config = yaml.safe_load(conf_file)
 
     # -----------------------------------------------

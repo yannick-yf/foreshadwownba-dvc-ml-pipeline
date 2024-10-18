@@ -117,7 +117,14 @@ def train_cross_val(
 
 
 def get_predicted_values_from_cross_val(
-    target_column, group_cv_variable, estimator, train_df, x_train, y_train, cross_validation_object, groups
+    target_column,
+    group_cv_variable,
+    estimator,
+    train_df,
+    x_train,
+    y_train,
+    cross_validation_object,
+    groups,
 ) -> pd.DataFrame:
     """Get predicted values from cross validation."""
 
@@ -132,7 +139,13 @@ def get_predicted_values_from_cross_val(
     )
 
     y_cv_pred_results = cross_val_predict(
-        estimator, x_train, y_train, cv=cross_validation_object, groups=groups, n_jobs=-1, method="predict"
+        estimator,
+        x_train,
+        y_train,
+        cv=cross_validation_object,
+        groups=groups,
+        n_jobs=-1,
+        method="predict",
     )
 
     train_w_cv_pred = train_df[

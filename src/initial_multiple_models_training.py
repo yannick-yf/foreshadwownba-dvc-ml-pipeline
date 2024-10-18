@@ -9,6 +9,7 @@ from pycaret.classification import *
 
 from src.utils.logs import get_logger
 
+
 def pre_train_multplie_models(config_path: dict) -> pd.DataFrame:
     """Load raw data.
     Args:

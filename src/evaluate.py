@@ -13,8 +13,9 @@ from sklearn.metrics import ConfusionMatrixDisplay, precision_score, accuracy_sc
 
 from src.utils.logs import get_logger
 
+
 def rename_opponent_columns(training_df: pd.DataFrame) -> pd.DataFrame:
-    """ 
+    """
     Rename opponent columns
     """
     training_df.columns = training_df.columns.str.replace("_y", "_opp")
@@ -34,15 +35,16 @@ def write_bar_plot_df_from_json(report: dict, filename: str) -> pd.DataFrame:
                 "cv_accuracy",
                 "evaluation_2lg_accuracy",
                 "evaluation_1lg_accuracy",
-                "eval_vs_baseline_accuracy",
+                "eval_vs_baseline_diff_accuracy",
             ]
         ].T
     ).reset_index()
 
     bar_plot_data.columns = ["name", "metric_value"]
     bar_plot_data.to_csv(filename, index=False)
-    
-    return 'plot generated'
+
+    return "plot generated"
+
 
 def evaluate(config_path: dict) -> pd.DataFrame:
     """Load raw data.
@@ -72,7 +74,6 @@ def evaluate(config_path: dict) -> pd.DataFrame:
 
     logger.info("Evaluate CV scores DataFrame")
     cv_accuracy = round(cross_val_scores_df.test_accuracy_score.mean(), 3)
-    cv_precision = round(cross_val_scores_df.test_precision_score.mean(), 3)
 
     logger.info("Load test dataset")
 
@@ -157,12 +158,6 @@ def evaluate(config_path: dict) -> pd.DataFrame:
 
     test_df_w_pred = test_df_w_pred.drop_duplicates(subset=["id"], keep="first")
 
-    evaluation_one_line_per_game_precision = round(
-        precision_score(
-            test_df_w_pred["results"], test_df_w_pred["pred_results_1_line_game"]
-        ),
-        3,
-    )
     evaluation_one_line_per_game_accuracy = round(
         accuracy_score(
             test_df_w_pred["results"], test_df_w_pred["pred_results_1_line_game"]
@@ -171,42 +166,38 @@ def evaluate(config_path: dict) -> pd.DataFrame:
     )
 
     logger.info(
-        "EVALUATION 1 LINE PER GAME PRECISION: %s",round(evaluation_one_line_per_game_precision, 3)
-    )
-    logger.info(
-        "EVALUATION 2 LINE PER GAME ACCURACY: %s", round(evaluation_one_line_per_game_accuracy, 3)
+        "EVALUATION 2 LINE PER GAME ACCURACY: %s",
+        round(evaluation_one_line_per_game_accuracy, 3),
     )
 
     # ---------------------------------------------
 
-    evaluation_precision = precision_score(y_test, prediction_value)
     evaluation_accuracy = accuracy_score(y_test, prediction_value)
 
-    logger.info(
-        "EVALUATION 2LINES PER GAME PRECISION: %s", round(evaluation_precision, 3)
-    )
     logger.info(
         "EVALUATION 2LINES PER GAME ACCURACY: %s", round(evaluation_accuracy, 3)
     )
 
     logger.info("Load Baseline dataset")
     # Open and read the JSON file
-    with open("data/reports/baseline_classifier_metrics.json", "r", encoding='utf-8') as file:
+    with open(
+        "data/reports/baseline_classifier_metrics.json", "r", encoding="utf-8"
+    ) as file:
         baseline_classifier_metrics = json.load(file)
+
+    eval_vs_baseline_accuracy = round(
+        evaluation_accuracy - baseline_classifier_metrics["baseline_accuracy"], 3
+    )
+
+    logger.info(
+        "EVALUATION VS BASELINE ACCURACY DIFF: %s", round(eval_vs_baseline_accuracy, 3)
+    )
 
     report = {
         "cv_accuracy": round(cv_accuracy, 3),
-        "cv_precision": round(cv_precision, 3),
         "evaluation_2lg_accuracy": round(evaluation_accuracy, 3),
-        "evaluation_2lg_precision": round(evaluation_precision, 3),
         "evaluation_1lg_accuracy": round(evaluation_one_line_per_game_accuracy, 3),
-        "evaluation_1lg_precision": round(evaluation_one_line_per_game_precision, 3),
-        "eval_vs_baseline_accuracy": round(
-            evaluation_accuracy - baseline_classifier_metrics["baseline_accuracy"], 3
-        ),
-        "eval_vs_baseline_precision": round(
-            evaluation_precision - baseline_classifier_metrics["baseline_precision"], 3
-        ),
+        "eval_vs_baseline_diff_accuracy": eval_vs_baseline_accuracy,
         "actual": y_test,
         "predicted": prediction_value,
     }
@@ -217,13 +208,11 @@ def evaluate(config_path: dict) -> pd.DataFrame:
         json.dump(
             obj={
                 "accuracy_cv_score": report["cv_accuracy"],
-                "precision_cv_score": report["cv_precision"],
                 "accuracy_2lg_evaluation_score": report["evaluation_2lg_accuracy"],
-                "precision_2lg_evaluation_score": report["evaluation_2lg_precision"],
                 "accuracy_1lg_evaluation_score": report["evaluation_1lg_accuracy"],
-                "precision_1lg_evaluation_score": report["evaluation_1lg_precision"],
-                "eval_vs_baseline_accuracy": report["eval_vs_baseline_accuracy"],
-                "eval_vs_baseline_precision": report["eval_vs_baseline_precision"],
+                "eval_vs_baseline_diff_accuracy": report[
+                    "eval_vs_baseline_diff_accuracy"
+                ],
             },
             fp=file,
         )
@@ -259,7 +248,8 @@ def evaluate(config_path: dict) -> pd.DataFrame:
     plt.savefig("./data/reports/shap_plot_bar.png", bbox_inches="tight", dpi=100)
 
     logger.info(
-        "Shap plots saved to : %s, './data/reports/shap_plot_bar.png'", shap_beeswarm_path
+        "Shap plots saved to : %s, './data/reports/shap_plot_bar.png'",
+        shap_beeswarm_path,
     )
 
     logger.info("Evaluate Step Done")

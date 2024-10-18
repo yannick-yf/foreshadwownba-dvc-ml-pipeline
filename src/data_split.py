@@ -42,7 +42,7 @@ def data_split(config_path: dict) -> None:
 
     logger.info("split_ratio: %s", split_ratio)
     logger.info("num_train_samples: %s", len(train_dataset))
-    logger.info("num_test_samples: %s", len(test_dataset)) 
+    logger.info("num_test_samples: %s", len(test_dataset))
     logger.info("num_features: %s", len(train_dataset.columns))
 
     logger.info("Save train and test sets")
