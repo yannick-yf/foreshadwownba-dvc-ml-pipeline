@@ -14,6 +14,7 @@ from auto_feat_ml.data_models.feature_model import FeatureIn
 
 from src.utils.logs import get_logger
 
+
 def feature_selection(config_path: Path) -> pd.DataFrame:
     """
     Load raw data from the MySQL database.
@@ -48,7 +49,7 @@ def feature_selection(config_path: Path) -> pd.DataFrame:
     train_df = pd.read_csv("./data/processed/train_dataset.csv")
     test_df = pd.read_csv("./data/processed/test_dataset.csv")
 
-    X_train = train_df.drop(
+    x_train = train_df.drop(
         [target_column, group_cv_variable, "id_season", "tm", "opp"], axis=1
     )
 
@@ -59,7 +60,7 @@ def feature_selection(config_path: Path) -> pd.DataFrame:
         list_features_to_select = config_params["feature_selection"][
             "list_manual_features_to_select"
         ]
-        X_train = X_train[list_features_to_select]
+        x_train = x_train[list_features_to_select]
 
         output_column_names = list_features_to_select
 
@@ -73,7 +74,7 @@ def feature_selection(config_path: Path) -> pd.DataFrame:
         list_nb_feature_to_select = [int(i) for i in list_nb_feature_to_select]
 
         groups = train_df[group_cv_variable]
-        cv = GroupKFold(n_splits=cross_validation_n_splits)
+        cross_validation_object = GroupKFold(n_splits=cross_validation_n_splits)
 
         # ------------------------------------------
         # features_to_force process from str input to list
@@ -84,7 +85,7 @@ def feature_selection(config_path: Path) -> pd.DataFrame:
             feature_selection = FeatureSelection(
                 FeatureIn(
                     list_number_feature_to_select=list_nb_feature_to_select,
-                    training_set=X_train,
+                    training_set=x_train,
                     target_variable=y_train,
                     features_to_force=features_to_force,
                     selection_type="classification",
@@ -94,14 +95,14 @@ def feature_selection(config_path: Path) -> pd.DataFrame:
             feature_selection = FeatureSelection(
                 FeatureIn(
                     list_number_feature_to_select=list_nb_feature_to_select,
-                    training_set=X_train,
+                    training_set=x_train,
                     target_variable=y_train,
                     selection_type="classification",
                 )
             )
 
         output = feature_selection.select_features_pipeline(
-            pd_column_groups=groups, group_kfold=cv
+            pd_column_groups=groups, group_kfold=cross_validation_object
         )
 
         logger.info("Column Selected are: %s ", str(output.column_names))

@@ -1,7 +1,6 @@
 """Training models"""
 
 import argparse
-from typing import Text
 
 import joblib
 import pandas as pd
@@ -11,12 +10,12 @@ from src.training.train_cross_val import train_cross_val
 from src.utils.logs import get_logger
 
 
-def train(config_path: Text) -> pd.DataFrame:
+def train(config_path: dict) -> pd.DataFrame:
     """Load raw data.
     Args:
         config_path {Text}: path to config
     """
-    with open("params.yaml") as conf_file:
+    with open(config_path, encoding='utf-8') as conf_file:
         config = yaml.safe_load(conf_file)
 
     # -----------------------------------------------
@@ -32,7 +31,7 @@ def train(config_path: Text) -> pd.DataFrame:
     logger = get_logger("TRAINING_STEP", log_level=config["base"]["log_level"])
 
     logger.info("Get estimator name")
-    logger.info(f"Estimator: {model_name}")
+    logger.info("Estimator: %s", model_name)
 
     logger.info("Load train dataset")
     train_df = pd.read_csv("./data/processed/train_dataset_fs.csv")
@@ -40,7 +39,7 @@ def train(config_path: Text) -> pd.DataFrame:
 
     # Split the training data into features (X_train) and target (y_train)
     train_df = train_df.reset_index(drop=True)
-    logger.info(f"cross_validation_n_splits: {cross_validation_n_splits}")
+    logger.info("cross_validation_n_splits: %s", cross_validation_n_splits)
 
     logger.info("Train Cross-Validation to get best params")
     scores, model, cross_val_pred_train_df = train_cross_val(
@@ -49,19 +48,18 @@ def train(config_path: Text) -> pd.DataFrame:
         group_cv_variable=group_cv_variable,
         estimator_configs=estimator_configs,  # filtered_estimator_configs,
         cross_validation_n_splits=cross_validation_n_splits,
-        scoring_metric=scoring_metric,
         groups=groups,
     )
 
-    logger.info(f"Best score: {model}")
+    logger.info("Best score: %s", model)
 
     cross_val_scores_df = pd.DataFrame(scores)
 
     cv_accuracy = round(cross_val_scores_df.test_accuracy_score.mean(), 3)
     cv_precision = round(cross_val_scores_df.test_precision_score.mean(), 3)
 
-    logger.info(f"CV ACCURACY: {cv_accuracy};")
-    logger.info(f"CV PRECISION: {cv_precision};")
+    logger.info("CV ACCURACY: %s", cv_accuracy)
+    logger.info("CV PRECISION: %s", cv_precision)
 
     cross_val_pred_train_df.to_csv("./models/cross_val_pred.csv", index=False)
     cross_val_scores_df.to_csv("./models/cross_val_score.csv", index=False)

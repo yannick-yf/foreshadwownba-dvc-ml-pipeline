@@ -1,21 +1,18 @@
 """Data split"""
 
-
 import argparse
-from typing import Text
-
 import pandas as pd
 import yaml
 
 from src.utils.logs import get_logger
 
 
-def data_split(config_path: Text) -> None:
+def data_split(config_path: dict) -> None:
     """Load raw data.
     Args:
         config_path {Text}: path to config
     """
-    with open(config_path) as conf_file:
+    with open(config_path, encoding="utf-8") as conf_file:
         config = yaml.safe_load(conf_file)
 
     logger = get_logger("DATA_SPLIT_STEP", log_level=config["base"]["log_level"])
@@ -43,10 +40,10 @@ def data_split(config_path: Text) -> None:
     test_dataset = dataset[dataset[group_cv_variable].isin(validation_id)]
     train_dataset = dataset[~dataset[group_cv_variable].isin(validation_id)]
 
-    logger.info(f"split_ratio: {split_ratio}")
-    logger.info(f"num_train_samples: {len(train_dataset)}")
-    logger.info(f"num_test_samples: {len(test_dataset)}")
-    logger.info(f"num_features: {len(train_dataset.columns)}")
+    logger.info("split_ratio: %s", split_ratio)
+    logger.info("num_train_samples: %s", len(train_dataset))
+    logger.info("num_test_samples: %s", len(test_dataset)) 
+    logger.info("num_features: %s", len(train_dataset.columns))
 
     logger.info("Save train and test sets")
 

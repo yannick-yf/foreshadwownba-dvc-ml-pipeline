@@ -2,7 +2,6 @@
 
 import argparse
 import json
-from typing import Text
 
 import joblib
 import matplotlib.pyplot as plt
@@ -14,16 +13,20 @@ from sklearn.metrics import ConfusionMatrixDisplay, precision_score, accuracy_sc
 
 from src.utils.logs import get_logger
 
-logger = get_logger("EVALUATION_STEP", log_level="INFO")
-
 def rename_opponent_columns(training_df: pd.DataFrame) -> pd.DataFrame:
-    """ """
+    """ 
+    Rename opponent columns
+    """
     training_df.columns = training_df.columns.str.replace("_y", "_opp")
     training_df.columns = training_df.columns.str.replace("_x", "")
 
     return training_df
 
+
 def write_bar_plot_df_from_json(report: dict, filename: str) -> pd.DataFrame:
+    """
+    Generate plot from json
+    """
     bar_plot_data = pd.json_normalize(report)
     bar_plot_data = pd.DataFrame(
         bar_plot_data[
@@ -38,20 +41,21 @@ def write_bar_plot_df_from_json(report: dict, filename: str) -> pd.DataFrame:
 
     bar_plot_data.columns = ["name", "metric_value"]
     bar_plot_data.to_csv(filename, index=False)
+    
+    return 'plot generated'
 
-
-def evaluate(config_path: Text) -> pd.DataFrame:
+def evaluate(config_path: dict) -> pd.DataFrame:
     """Load raw data.
     Args:
         config_path {Text}: path to config
     """
-    with open(config_path) as conf_file:
+    with open(config_path, encoding="utf-8") as conf_file:
         config = yaml.safe_load(conf_file)
 
     # -----------------------------------------------
     # Read daa for feature creation
 
-    logger = get_logger("EVALUATE", log_level=config["base"]["log_level"])
+    logger = get_logger("EVALUATION_STEP", log_level=config["base"]["log_level"])
 
     # -----------------------------------------------
     # Read input params
@@ -85,15 +89,15 @@ def evaluate(config_path: Text) -> pd.DataFrame:
 
     logger.info("Evaluate (build report)")
     y_test = test_df.loc[:, target_column].values
-    X_test = test_df.drop(list_columns_to_delete, axis=1).values
+    x_test = test_df.drop(list_columns_to_delete, axis=1).values
 
-    prediction_value = model.predict(X_test)
+    prediction_value = model.predict(x_test)
 
     # ----------------------------------------------------
     # Get the proba to get the Metric evaluation per game
     # We will comapre proba to win from team 1 vs team 2
     # It leads to have 1 lign per game
-    prediction_proba = model.predict_proba(X_test)
+    prediction_proba = model.predict_proba(x_test)
     prediction_proba_df = pd.DataFrame(prediction_proba)
     prediction_proba_df.columns = ["prediction_proba_df_0", "prediction_proba_df_1"]
 
@@ -167,10 +171,10 @@ def evaluate(config_path: Text) -> pd.DataFrame:
     )
 
     logger.info(
-        f"EVALUATION 1 LINE PER GAME PRECISION: {round(evaluation_one_line_per_game_precision, 3)};"
+        "EVALUATION 1 LINE PER GAME PRECISION: %s",round(evaluation_one_line_per_game_precision, 3)
     )
     logger.info(
-        f"EVALUATION 2 LINE PER GAME ACCURACY: {round(evaluation_one_line_per_game_accuracy, 3)};"
+        "EVALUATION 2 LINE PER GAME ACCURACY: %s", round(evaluation_one_line_per_game_accuracy, 3)
     )
 
     # ---------------------------------------------
@@ -179,15 +183,15 @@ def evaluate(config_path: Text) -> pd.DataFrame:
     evaluation_accuracy = accuracy_score(y_test, prediction_value)
 
     logger.info(
-        f"EVALUATION 2LINES PER GAME PRECISION: {round(evaluation_precision, 3)};"
+        "EVALUATION 2LINES PER GAME PRECISION: %s", round(evaluation_precision, 3)
     )
     logger.info(
-        f"EVALUATION 2LINES PER GAME ACCURACY: {round(evaluation_accuracy, 3)};"
+        "EVALUATION 2LINES PER GAME ACCURACY: %s", round(evaluation_accuracy, 3)
     )
 
     logger.info("Load Baseline dataset")
     # Open and read the JSON file
-    with open("data/reports/baseline_classifier_metrics.json", "r") as file:
+    with open("data/reports/baseline_classifier_metrics.json", "r", encoding='utf-8') as file:
         baseline_classifier_metrics = json.load(file)
 
     report = {
@@ -209,7 +213,7 @@ def evaluate(config_path: Text) -> pd.DataFrame:
 
     logger.info("Save metrics")
 
-    with open("data/reports/metrics.json", "w", encoding="utf-8") as fp:
+    with open(metrics_path, "w", encoding="utf-8") as file:
         json.dump(
             obj={
                 "accuracy_cv_score": report["cv_accuracy"],
@@ -221,11 +225,11 @@ def evaluate(config_path: Text) -> pd.DataFrame:
                 "eval_vs_baseline_accuracy": report["eval_vs_baseline_accuracy"],
                 "eval_vs_baseline_precision": report["eval_vs_baseline_precision"],
             },
-            fp=fp,
+            fp=file,
         )
 
     logger.info(
-        f"Accuracy & Precision metrics file saved to : {'data/reports/metrics.json'}"
+        "Accuracy & Precision metrics file saved to : {'data/reports/metrics.json'}"
     )
 
     # Accurcay Barplot - Report Data Processing for the plot:
@@ -233,7 +237,7 @@ def evaluate(config_path: Text) -> pd.DataFrame:
     write_bar_plot_df_from_json(report, bar_plot_data_path)
 
     # ConfusionMatrixDisplay
-    disp = ConfusionMatrixDisplay.from_predictions(
+    ConfusionMatrixDisplay.from_predictions(
         test_df_w_pred[target_column],
         test_df_w_pred["prediction_value"],
         normalize="true",
@@ -255,7 +259,7 @@ def evaluate(config_path: Text) -> pd.DataFrame:
     plt.savefig("./data/reports/shap_plot_bar.png", bbox_inches="tight", dpi=100)
 
     logger.info(
-        f"Shap plots saved to : {shap_beeswarm_path, './data/reports/shap_plot_bar.png' }"
+        "Shap plots saved to : %s, './data/reports/shap_plot_bar.png'", shap_beeswarm_path
     )
 
     logger.info("Evaluate Step Done")

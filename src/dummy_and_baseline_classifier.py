@@ -3,7 +3,6 @@
 
 import argparse
 import json
-from typing import Text
 
 import numpy as np
 import pandas as pd
@@ -13,12 +12,13 @@ from sklearn.metrics import confusion_matrix
 
 from src.utils.logs import get_logger
 
-def dummy_and_baseline_classifier(config_path: Text) -> None:
+
+def dummy_and_baseline_classifier(config_path: dict) -> None:
     """Load raw data.
     Args:
         config_path {Text}: path to config
     """
-    with open(config_path) as conf_file:
+    with open(config_path, encoding="utf-8") as conf_file:
         config = yaml.safe_load(conf_file)
 
     logger = get_logger("DUMMY_CLASSIFIER_STEP", log_level=config["base"]["log_level"])
@@ -26,7 +26,6 @@ def dummy_and_baseline_classifier(config_path: Text) -> None:
     # -----------------------------------------------
     # Read input params
     target_column = config["dummy_classifier"]["target_variable"]
-    random_state = config["base"]["random_state"]
 
     logger.info("Load train dataset")
     train_df = pd.read_csv("./data/processed/train_dataset.csv")
@@ -34,22 +33,22 @@ def dummy_and_baseline_classifier(config_path: Text) -> None:
 
     logger.info("Multiple Models Pre Train:")
 
-    X_train = train_df.drop([target_column], axis=1)
+    x_train = train_df.drop([target_column], axis=1)
     y_train = train_df[target_column]
 
-    X_test = test_df.drop([target_column], axis=1)
+    x_test = test_df.drop([target_column], axis=1)
     y_test = test_df[target_column]
 
     # --------------------------------
     # Dummy Classifier
 
     dummy_clf = DummyClassifier(strategy="most_frequent")
-    dummy_clf.fit(X_train, y_train)
+    dummy_clf.fit(x_train, y_train)
     DummyClassifier(strategy="most_frequent")
-    dummy_clf.predict(X_test)
-    dummy_classifier_score = round(dummy_clf.score(X_test, y_test), 3)
+    dummy_clf.predict(x_test)
+    dummy_classifier_score = round(dummy_clf.score(x_test, y_test), 3)
 
-    logger.info(f"Dummy Classifier Score: {dummy_classifier_score}")
+    logger.info(f"Dummy Classifier Score: %s", dummy_classifier_score)
 
     # --------------------------------
     # Baseline Classifier - Simple Domain expert rules
@@ -58,22 +57,22 @@ def dummy_and_baseline_classifier(config_path: Text) -> None:
         test_df["before_average_W_ratio"] > test_df["before_average_W_ratio_opp"], 1, 0
     )
 
-    tn, fp, fn, tp = confusion_matrix(
+    true_negative, false_positive, false_negative, true_positive = confusion_matrix(
         test_df["results"], test_df["benchmark_prob"]
     ).ravel()
-    precision_metric = round(tp / (tp + fp), 3)
-    specificity_metric = round(tn / (tn + fp), 3)
-    recall_metric = round(tp / (tp + fn), 3)
+    precision_metric = round(true_positive / (true_positive + false_positive), 3)
+    specificity_metric = round(true_negative / (true_negative + false_positive), 3)
+    recall_metric = round(true_positive / (true_positive + false_negative), 3)
     f1_metric = round(
         (2 * precision_metric * recall_metric) / (precision_metric + recall_metric), 3
     )
-    accuracy_metric = round((tp + tn) / (tp + tn + fp + fn), 3)
+    accuracy_metric = round((true_positive + true_negative) / (true_positive + true_negative + false_positive + false_negative), 3)
 
-    logger.info(f"Baseline Accuracy: {accuracy_metric}")
-    logger.info(f"Baseline Precision: {precision_metric}")
-    logger.info(f"Baseline Specificity: {specificity_metric}")
-    logger.info(f"Baseline Recall: {recall_metric}")
-    logger.info(f"Baseline F1: {f1_metric}")
+    logger.info("Baseline Accuracy: %s", accuracy_metric)
+    logger.info("Baseline Precision: %s", precision_metric)
+    logger.info("Baseline Specificity: %s", specificity_metric)
+    logger.info("Baseline Recall: %s", recall_metric)
+    logger.info("Baseline F1: %s", f1_metric)
 
     report = {
         "baseline_accuracy": round(accuracy_metric, 3),
@@ -87,7 +86,7 @@ def dummy_and_baseline_classifier(config_path: Text) -> None:
 
     with open(
         "data/reports/baseline_classifier_metrics.json", "w", encoding="utf-8"
-    ) as fp:
+    ) as file:
         json.dump(
             obj={
                 "baseline_accuracy": report["baseline_accuracy"],
@@ -96,7 +95,7 @@ def dummy_and_baseline_classifier(config_path: Text) -> None:
                 "baseline_recall": report["baseline_recall"],
                 "baseline_f1": report["baseline_f1"],
             },
-            fp=fp,
+            fp=file,
         )
 
 

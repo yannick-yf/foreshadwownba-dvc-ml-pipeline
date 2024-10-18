@@ -1,7 +1,6 @@
 """Pre Train Multiple models."""
 
 import argparse
-from typing import Text
 
 import pandas as pd
 import yaml
@@ -10,14 +9,12 @@ from pycaret.classification import *
 
 from src.utils.logs import get_logger
 
-logger = get_logger("PRE_TRAIN_MULTIPLE_MODELS", log_level="INFO")
-
-def pre_train_multplie_models(config_path: Text) -> pd.DataFrame:
+def pre_train_multplie_models(config_path: dict) -> pd.DataFrame:
     """Load raw data.
     Args:
         config_path {Text}: path to config
     """
-    with open(config_path) as conf_file:
+    with open(config_path, encoding="utf-8") as conf_file:
         config = yaml.safe_load(conf_file)
 
     # -----------------------------------------------
@@ -43,7 +40,7 @@ def pre_train_multplie_models(config_path: Text) -> pd.DataFrame:
 
     groups = train_df[group_cv_variable]
 
-    X_train = train_df.drop(
+    x_train = train_df.drop(
         [
             target_column,
             group_cv_variable,
@@ -60,7 +57,7 @@ def pre_train_multplie_models(config_path: Text) -> pd.DataFrame:
 
     # init setup on exp
     classification_exp.setup(
-        X_train,
+        x_train,
         target=y_train,
         session_id=random_state,
         fold_strategy=GroupKFold(n_splits=cross_validation_n_splits),

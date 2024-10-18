@@ -10,6 +10,7 @@ from sklearn.metrics import (
 from sklearn.model_selection import GroupKFold, cross_validate, cross_val_predict
 from xgboost import XGBClassifier
 
+
 class UnsupportedClassifier(Exception):
     """Exception raised for unsupported classifiers.
 
@@ -53,10 +54,8 @@ def train_cross_val(
     target_column: str,
     group_cv_variable: str,
     estimator_configs: list[dict[str, any]],
-    # param_grids: dict,
     cross_validation_n_splits: int,
     groups: pd.Series,
-    scoring_metric: str = "r2",
 ) -> tuple[str, pd.DataFrame]:
     """Train model.
     Args:
@@ -68,9 +67,7 @@ def train_cross_val(
         best_estimator, best_scores
     """
 
-    # estimators = get_supported_estimator()
-    groups = groups
-    X_train = train_df.drop(
+    x_train = train_df.drop(
         [
             target_column,
             group_cv_variable,
@@ -82,7 +79,7 @@ def train_cross_val(
     )
 
     y_train = train_df[target_column]
-    cv = GroupKFold(n_splits=cross_validation_n_splits)
+    cross_validation_object = GroupKFold(n_splits=cross_validation_n_splits)
 
     scoring = {
         "precision_score": make_scorer(precision_score),
@@ -93,10 +90,10 @@ def train_cross_val(
 
     scores = cross_validate(
         estimator,
-        X_train,
+        x_train,
         y_train,
         scoring=scoring,
-        cv=cv,
+        cv=cross_validation_object,
         groups=groups,
         return_estimator=True,
         return_train_score=True,
@@ -108,34 +105,34 @@ def train_cross_val(
         group_cv_variable,
         estimator,
         train_df,
-        X_train,
+        x_train,
         y_train,
-        cv,
+        cross_validation_object,
         groups,
     )
 
-    estimator.fit(X_train, y_train)
+    estimator.fit(x_train, y_train)
 
     return scores, estimator, train_w_cv_pred
 
 
 def get_predicted_values_from_cross_val(
-    target_column, group_cv_variable, estimator, train_df, X_train, y_train, cv, groups
+    target_column, group_cv_variable, estimator, train_df, x_train, y_train, cross_validation_object, groups
 ) -> pd.DataFrame:
     """Get predicted values from cross validation."""
 
     y_cv_pred_proba = cross_val_predict(
         estimator,
-        X_train,
+        x_train,
         y_train,
-        cv=cv,
+        cv=cross_validation_object,
         groups=groups,
         n_jobs=-1,
         method="predict_proba",
     )
 
     y_cv_pred_results = cross_val_predict(
-        estimator, X_train, y_train, cv=cv, groups=groups, n_jobs=-1, method="predict"
+        estimator, x_train, y_train, cv=cross_validation_object, groups=groups, n_jobs=-1, method="predict"
     )
 
     train_w_cv_pred = train_df[
