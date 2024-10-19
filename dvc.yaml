@@ -1,20 +1,8 @@
-#TODO: Add Barplot vizualisation from metrics we want to expose
-#TODO: Add feature seelction packager
-
 vars:
   - project:
       aws: cads-it
       directory: .
 stages:
-  get_training_dataset:
-    cmd: python3 -m src.get_training_dataset --config=params.yaml
-    deps:
-      - src/get_training_dataset.py
-    params:
-      - base
-      - get_training_dataset
-    outs:
-      - ./data/input/nba_training_dataset.csv
   data_process:
     cmd: python -m src.data_process --config=params.yaml
     deps:
@@ -38,10 +26,10 @@ stages:
     outs:
       - ./data/processed/train_dataset.csv
       - ./data/processed/test_dataset.csv
-  dummy_and_baseline_classifier:
-    cmd: python -m src.dummy_and_baseline_classifier --config=params.yaml
+  baseline_classifier:
+    cmd: python -m src.baseline_classifier --config=params.yaml
     deps:
-      - src/dummy_and_baseline_classifier.py
+      - src/baseline_classifier.py
       - ./data/processed/train_dataset.csv
       - ./data/processed/test_dataset.csv
     params:
@@ -49,6 +37,8 @@ stages:
       - get_training_dataset
       - data_split
       - dummy_classifier
+    outs:
+      - ./data/reports/baseline_classifier_metrics.json
   feature_selection:
     cmd: python -m src.feature_selection --config=params.yaml
     deps:
@@ -98,6 +88,7 @@ stages:
       deps:
         - src/evaluate.py
         - ./models/cross_val_score.csv
+        - ./data/reports/baseline_classifier_metrics.json
       params:
         - base
         - train
@@ -106,13 +97,13 @@ stages:
       outs:
         - './models/test_df_w_pred.csv'
       plots:
-          #- data/reports/regression_plot.png
+          - data/reports/ConfusionMatrix.png
           - data/reports/shap_beeswarm.png
           - data/reports/shap_plot_bar.png
-          # - data/reports/regression_plot_data.csv:
-          #     template: scatter
-          #     x: predicted
-          #     y: y_true
+          - data/reports/bar_plot_data.csv:
+              template: bar_horizontal
+              x: metric_value
+              y: name
       metrics:
       - data/reports/metrics.json:
           cache: false

@@ -1,62 +1,56 @@
 """Pre Train Multiple models."""
 
-# https://machinelearningmastery.com/multi-output-regression-models-with-python/
-
-import os
-from pathlib import Path
-import pandas as pd
-import boto3
-
-# Machine Learning package
-from sklearn.model_selection import GroupKFold
-
-from typing import Text
-import yaml
 import argparse
-from decouple import config
-import os
-import sys
-from src.utils.logs import get_logger
+
+import pandas as pd
+import yaml
+from sklearn.model_selection import GroupKFold
 from pycaret.classification import *
 
-logger = get_logger("PRE_TRAIN_MULTIPLE_MODELS", log_level="INFO")
+from src.utils.logs import get_logger
 
-def pre_train_multplie_models(config_path: Text) -> pd.DataFrame:
+
+def pre_train_multplie_models(config_path: dict) -> pd.DataFrame:
     """Load raw data.
     Args:
         config_path {Text}: path to config
     """
-    with open("params.yaml") as conf_file:
+    with open(config_path, encoding="utf-8") as conf_file:
         config = yaml.safe_load(conf_file)
 
-    #-----------------------------------------------
+    # -----------------------------------------------
     # Read data for feature creation
 
     logger = get_logger(
-        'INITIAL_MULTIPLE_MODELS_TRAINING', 
-        log_level=config['base']['log_level'])
-    
-    #-----------------------------------------------
+        "INITIAL_MULTIPLE_MODELS_TRAINING", log_level=config["base"]["log_level"]
+    )
+
+    # -----------------------------------------------
     # Read input params
-    target_column = config['dummy_classifier']['target_variable']
-    random_state = config['base']['random_state']
-    group_cv_variable = config['data_split']['group_cv_variable']
-    cross_validation_n_splits = config['initial_multiple_models_training']['cross_validation_n_splits']
+    target_column = config["dummy_classifier"]["target_variable"]
+    random_state = config["base"]["random_state"]
+    group_cv_variable = config["data_split"]["group_cv_variable"]
+    cross_validation_n_splits = config["initial_multiple_models_training"][
+        "cross_validation_n_splits"
+    ]
 
     logger.info("Load train dataset")
-    train_df = pd.read_csv('./data/processed/train_dataset_fs.csv')
+    train_df = pd.read_csv("./data/processed/train_dataset_fs.csv")
 
     logger.info("Multiple Models Pre Train:")
 
     groups = train_df[group_cv_variable]
-    
-    X_train = train_df.drop([
-        target_column, 
-        group_cv_variable,
-        'id_season',	
-        'tm',	
-        'opp',
-        ], axis=1)
+
+    x_train = train_df.drop(
+        [
+            target_column,
+            group_cv_variable,
+            "id_season",
+            "tm",
+            "opp",
+        ],
+        axis=1,
+    )
 
     y_train = train_df[target_column]
 
@@ -64,7 +58,7 @@ def pre_train_multplie_models(config_path: Text) -> pd.DataFrame:
 
     # init setup on exp
     classification_exp.setup(
-        X_train,
+        x_train,
         target=y_train,
         session_id=random_state,
         fold_strategy=GroupKFold(n_splits=cross_validation_n_splits),
@@ -72,25 +66,27 @@ def pre_train_multplie_models(config_path: Text) -> pd.DataFrame:
         n_jobs=-1,  # Use all available CPU cores
         # early_stopping=True,  # Early stopping to prevent overfitting
         log_experiment=False,  # Log experiment for tracking
-        experiment_name="initial_model_training"  # Experiment name for logging
+        experiment_name="initial_model_training",  # Experiment name for logging
     )
 
     # compare baseline models
-    classification_exp.compare_models() 
+    classification_exp.compare_models()
     results_df = classification_exp.pull()
 
     results_df["Precision"] = results_df["Prec."].round(2)
     results_df["Accuracy"] = results_df["Accuracy"].round(2)
 
-    accuracy_metric_by_model = results_df.sort_values(by="Accuracy", ascending=False).head(3)[["Model"]]
+    accuracy_metric_by_model = results_df.sort_values(
+        by="Accuracy", ascending=False
+    ).head(3)[["Model"]]
 
-    accuracy_metric_by_model.to_csv('./data/processed/top_3_models.csv',index=False)
+    accuracy_metric_by_model.to_csv("./data/processed/top_3_models.csv", index=False)
 
-    precision_metric_by_model = results_df.sort_values(by="Precision", ascending=False).head(3)[
-        ["Model", "Precision"]
-    ]
+    precision_metric_by_model = results_df.sort_values(
+        by="Precision", ascending=False
+    ).head(3)[["Model", "Precision"]]
 
-    results_df.to_csv('./data/processed/models_results.csv',index=False)
+    results_df.to_csv("./data/processed/models_results.csv", index=False)
 
     logger.info(
         "Top 3 models to test based on Accuracy: "
@@ -111,19 +107,12 @@ def pre_train_multplie_models(config_path: Text) -> pd.DataFrame:
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     arg_parser = argparse.ArgumentParser()
 
-    arg_parser.add_argument(
-        '--config', 
-        dest='config', 
-        required=True)
-    
+    arg_parser.add_argument("--config", dest="config", required=True)
+
     args = arg_parser.parse_args()
 
-    pre_train_multplie_models(
-        config_path = args.config
-        )
-
-
+    pre_train_multplie_models(config_path=args.config)

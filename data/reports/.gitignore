@@ -1,2 +1,5 @@
 /shap_beeswarm.png
 /shap_plot_bar.png
+/ConfusionMatrix.png
+/baseline_classifier_metrics.json
+/bar_plot_data.csv
