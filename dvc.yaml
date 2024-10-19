@@ -1,6 +1,3 @@
-#TODO: Add Barplot vizualisation from metrics we want to expose
-#TODO: Add feature seelction packager
-
 vars:
   - project:
       aws: cads-it
