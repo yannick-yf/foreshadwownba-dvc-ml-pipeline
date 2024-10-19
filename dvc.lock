@@ -357,12 +357,12 @@ stages:
     deps:
     - path: ./data/processed/test_dataset_fs.csv
       hash: md5
-      md5: 41916d3a9caff3493740c89687f673c1
-      size: 776341
+      md5: 51db51f412770846b5058337ba420d9d
+      size: 788201
     - path: ./data/processed/train_dataset_fs.csv
       hash: md5
-      md5: ccff22c81357d336ca85abce578b0ddd
-      size: 1574795
+      md5: ec7452cecf4ef631f4a965dea2b0f8b4
+      size: 1598926
     - path: src/initial_multiple_models_training.py
       hash: md5
       md5: cf67290f1c418472f5c1f5afb7df3ab4
@@ -381,19 +381,19 @@ stages:
     outs:
     - path: data/processed/top_3_models.csv
       hash: md5
-      md5: 7de563ff8618adcae03b3ef13757f466
-      size: 79
+      md5: 6c38fabaab23e44d12e83a1857f1a4b7
+      size: 70
   train:
     cmd: python -m src.train --config=params.yaml
     deps:
     - path: ./data/processed/test_dataset_fs.csv
       hash: md5
-      md5: 41916d3a9caff3493740c89687f673c1
-      size: 776341
+      md5: 51db51f412770846b5058337ba420d9d
+      size: 788201
     - path: ./data/processed/train_dataset_fs.csv
       hash: md5
-      md5: ccff22c81357d336ca85abce578b0ddd
-      size: 1574795
+      md5: ec7452cecf4ef631f4a965dea2b0f8b4
+      size: 1598926
     - path: src/train.py
       hash: md5
       md5: dce79a06d700f038988c2c2bf6e9d69b
@@ -425,16 +425,16 @@ stages:
     outs:
     - path: ./models/cross_val_pred.csv
       hash: md5
-      md5: e08bc0135fb24441810a662b75032aaf
-      size: 1248970
+      md5: 5b9063c09559d1b5602182d3a2fe78e7
+      size: 1248609
     - path: ./models/cross_val_score.csv
       hash: md5
-      md5: f84391d53119b8edd5c436677ae9e0b2
-      size: 4469
+      md5: b59e7cf2384d0606ae75d1e6788668f6
+      size: 4468
     - path: ./models/model.joblib
       hash: md5
-      md5: e80cf818a4f248843e536f19d22c59b4
-      size: 2035328
+      md5: e9a2cc2de013c30872d4322c57e87c6b
+      size: 2014859
   feature_selection:
     cmd: python -m src.feature_selection --config=params.yaml
     deps:
@@ -472,21 +472,22 @@ stages:
           - before_average_W_ratio
           - before_average_W_ratio_opp
           - extdom_ext
+          - rest
         get_training_dataset:
           training_dataset: data/input/nba_training_dataset.csv
     outs:
     - path: ./data/processed/columns_selected.csv
       hash: md5
-      md5: 3b2807815fc1c9bf53b0772501644761
-      size: 80
+      md5: 46d48f34b8af43d7f2bc4e3db357e447
+      size: 77
     - path: ./data/processed/test_dataset_fs.csv
       hash: md5
-      md5: 41916d3a9caff3493740c89687f673c1
-      size: 776341
+      md5: 51db51f412770846b5058337ba420d9d
+      size: 788201
     - path: ./data/processed/train_dataset_fs.csv
       hash: md5
-      md5: ccff22c81357d336ca85abce578b0ddd
-      size: 1574795
+      md5: ec7452cecf4ef631f4a965dea2b0f8b4
+      size: 1598926
   evaluate:
     cmd: python3 -m src.evaluate --config=params.yaml
     deps:
@@ -496,8 +497,8 @@ stages:
       size: 27
     - path: ./models/cross_val_score.csv
       hash: md5
-      md5: f84391d53119b8edd5c436677ae9e0b2
-      size: 4469
+      md5: b59e7cf2384d0606ae75d1e6788668f6
+      size: 4468
     - path: src/evaluate.py
       hash: md5
       md5: 17d96d135c2c7786219e56e9a31fd248
@@ -526,28 +527,28 @@ stages:
     outs:
     - path: ./models/test_df_w_pred.csv
       hash: md5
-      md5: b20dcb9d259a02608b2526b035ccea32
-      size: 615067
+      md5: 9a2d26a4676bdb01d84df0e7178a2877
+      size: 614877
     - path: data/reports/ConfusionMatrix.png
       hash: md5
-      md5: dbb68dac907f32c456775f51688a7cb0
-      size: 17064
+      md5: eb3bb57e83e2173ec1316afc0f181ec9
+      size: 17033
     - path: data/reports/bar_plot_data.csv
       hash: md5
-      md5: 5aa87bee4211317f998422433a718334
+      md5: 810f0cdb9cba8e2d6aeb2b5f8001253e
       size: 133
     - path: data/reports/metrics.json
       hash: md5
-      md5: 55b7c14113e88d9426619e7d042c350d
+      md5: a7a1e77dc4164a6a49834ef0f24a0590
       size: 149
     - path: data/reports/shap_beeswarm.png
       hash: md5
-      md5: 6d89ff7070fd591057a81ae92dcf91e8
-      size: 60014
+      md5: e9c312960a2cd1e2910819899673852e
+      size: 58321
     - path: data/reports/shap_plot_bar.png
       hash: md5
-      md5: 337d69bee7b8f1e6fe958df6801a1e86
-      size: 24680
+      md5: 222310b9137534f3b2c58e6c00f5c146
+      size: 24019
   data_process:
     cmd: python -m src.data_process --config=params.yaml
     deps:

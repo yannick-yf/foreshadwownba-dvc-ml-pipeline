@@ -40,6 +40,7 @@ feature_selection:
     - before_average_W_ratio
     - before_average_W_ratio_opp
     - extdom_ext
+    - rest
 
 train:
   top_3_models: data/processed/top_3_models.csv
