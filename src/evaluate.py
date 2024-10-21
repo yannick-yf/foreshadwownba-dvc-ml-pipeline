@@ -102,6 +102,14 @@ def evaluate(config_path: dict) -> pd.DataFrame:
     prediction_proba_df = pd.DataFrame(prediction_proba)
     prediction_proba_df.columns = ["prediction_proba_df_0", "prediction_proba_df_1"]
 
+    # ---------------------------------------------
+
+    evaluation_accuracy = accuracy_score(y_test, prediction_value)
+
+    logger.info(
+        "EVALUATION 2 LINES PER GAME ACCURACY: %s", round(evaluation_accuracy, 3)
+    )
+
     test_df_w_pred = test_df[
         [
             target_column,
@@ -166,16 +174,8 @@ def evaluate(config_path: dict) -> pd.DataFrame:
     )
 
     logger.info(
-        "EVALUATION 2 LINE PER GAME ACCURACY: %s",
+        "EVALUATION 1 LINE PER GAME ACCURACY: %s",
         round(evaluation_one_line_per_game_accuracy, 3),
-    )
-
-    # ---------------------------------------------
-
-    evaluation_accuracy = accuracy_score(y_test, prediction_value)
-
-    logger.info(
-        "EVALUATION 2LINES PER GAME ACCURACY: %s", round(evaluation_accuracy, 3)
     )
 
     logger.info("Load Baseline dataset")
