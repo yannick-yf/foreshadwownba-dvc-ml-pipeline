@@ -429,8 +429,8 @@ stages:
       size: 1248609
     - path: ./models/cross_val_score.csv
       hash: md5
-      md5: 8fde6ef95ca881692076870a80d47610
-      size: 4470
+      md5: a366b674516f74132186766e4fcaf0e7
+      size: 4465
     - path: ./models/model.joblib
       hash: md5
       md5: e9a2cc2de013c30872d4322c57e87c6b
@@ -493,16 +493,16 @@ stages:
     deps:
     - path: ./data/reports/baseline_classifier_metrics.json
       hash: md5
-      md5: 537d184a939d3f1eb9925392bc7666b1
-      size: 27
+      md5: c768f95a4f0a983539d4f3e6422ad234
+      size: 65
     - path: ./models/cross_val_score.csv
       hash: md5
-      md5: 8fde6ef95ca881692076870a80d47610
-      size: 4470
+      md5: a366b674516f74132186766e4fcaf0e7
+      size: 4465
     - path: src/evaluate.py
       hash: md5
-      md5: c35a24fe73c9894550606bacc1458fe2
-      size: 7924
+      md5: 11b91d575bfd682a19808446a0e8f9f4
+      size: 8342
     params:
       params.yaml:
         base:
@@ -535,16 +535,16 @@ stages:
       size: 17033
     - path: data/reports/bar_plot_data.csv
       hash: md5
-      md5: 810f0cdb9cba8e2d6aeb2b5f8001253e
-      size: 133
+      md5: 7694b80bbe0b3fda55cba0d5826f2245
+      size: 163
     - path: data/reports/metrics.json
       hash: md5
-      md5: a7a1e77dc4164a6a49834ef0f24a0590
-      size: 149
+      md5: b9310a16305232f871a5c98f1d89581e
+      size: 183
     - path: data/reports/shap_beeswarm.png
       hash: md5
-      md5: 8d315f53f52ecd7b2b198e77c7a0bac1
-      size: 58760
+      md5: 8b265fa0fbdcb37812022c3485c3d9e8
+      size: 58708
     - path: data/reports/shap_plot_bar.png
       hash: md5
       md5: 222310b9137534f3b2c58e6c00f5c146
@@ -595,8 +595,8 @@ stages:
       size: 8101111
     - path: src/baseline_classifier.py
       hash: md5
-      md5: 459c0ca22de9efce19024ff89bf36501
-      size: 1970
+      md5: 08198825061539772b047bdb1c56cc2b
+      size: 2804
     params:
       params.yaml:
         base:
@@ -612,5 +612,5 @@ stages:
     outs:
     - path: ./data/reports/baseline_classifier_metrics.json
       hash: md5
-      md5: 537d184a939d3f1eb9925392bc7666b1
-      size: 27
+      md5: c768f95a4f0a983539d4f3e6422ad234
+      size: 65

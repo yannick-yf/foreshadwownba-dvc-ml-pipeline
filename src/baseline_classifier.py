@@ -27,12 +27,29 @@ def dummy_and_baseline_classifier(config_path: dict) -> None:
     # Read input params
 
     logger.info("Load train dataset")
+    train_df = pd.read_csv("./data/processed/test_dataset.csv")
     test_df = pd.read_csv("./data/processed/test_dataset.csv")
 
     logger.info("Multiple Models Pre Train:")
 
     # --------------------------------
     # Baseline Classifier - Simple Domain expert rules
+
+    train_df["benchmark_prob"] = np.where(
+        train_df["before_average_W_ratio"] > train_df["before_average_W_ratio_opp"], 1, 0
+    )
+
+    true_negative, false_positive, false_negative, true_positive = confusion_matrix(
+        train_df["results"], train_df["benchmark_prob"]
+    ).ravel()
+
+    train_accuracy_metric = round(
+        (true_positive + true_negative)
+        / (true_positive + true_negative + false_positive + false_negative),
+        3,
+    )
+
+    logger.info("Train Baseline Accuracy: %s", train_accuracy_metric)
 
     test_df["benchmark_prob"] = np.where(
         test_df["before_average_W_ratio"] > test_df["before_average_W_ratio_opp"], 1, 0
@@ -42,15 +59,18 @@ def dummy_and_baseline_classifier(config_path: dict) -> None:
         test_df["results"], test_df["benchmark_prob"]
     ).ravel()
 
-    accuracy_metric = round(
+    test_accuracy_metric = round(
         (true_positive + true_negative)
         / (true_positive + true_negative + false_positive + false_negative),
         3,
     )
 
-    logger.info("Baseline Accuracy: %s", accuracy_metric)
+    logger.info("Test Baseline Accuracy: %s", test_accuracy_metric)
 
-    report = {"baseline_accuracy": round(accuracy_metric, 3)}
+    report = {
+        "train_baseline_accuracy": round(train_accuracy_metric, 3),
+        "test_baseline_accuracy": round(test_accuracy_metric, 3)
+        }
 
     logger.info("Save metrics")
 
@@ -58,7 +78,10 @@ def dummy_and_baseline_classifier(config_path: dict) -> None:
         "data/reports/baseline_classifier_metrics.json", "w", encoding="utf-8"
     ) as file:
         json.dump(
-            obj={"baseline_accuracy": report["baseline_accuracy"]},
+            obj={
+                "train_baseline_accuracy": report["train_baseline_accuracy"],
+                "test_baseline_accuracy": report["test_baseline_accuracy"]
+                },
             fp=file,
         )
 
