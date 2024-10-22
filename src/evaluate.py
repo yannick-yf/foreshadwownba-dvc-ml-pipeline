@@ -23,7 +23,6 @@ def rename_opponent_columns(training_df: pd.DataFrame) -> pd.DataFrame:
 
     return training_df
 
-
 def write_bar_plot_df_from_json(report: dict, filename: str) -> pd.DataFrame:
     """
     Generate plot from json
@@ -33,6 +32,7 @@ def write_bar_plot_df_from_json(report: dict, filename: str) -> pd.DataFrame:
         bar_plot_data[
             [
                 "cv_accuracy",
+                "cv_accuracy_vs_baseline",
                 "evaluation_2lg_accuracy",
                 "evaluation_1lg_accuracy",
                 "eval_vs_baseline_diff_accuracy",
@@ -66,6 +66,13 @@ def evaluate(config_path: dict) -> pd.DataFrame:
     group_cv_variable = config["data_split"]["group_cv_variable"]
     metrics_path = config["evaluate"]["metrics_path"]
 
+    logger.info("Load Baseline dataset")
+    # Open and read the JSON file
+    with open(
+        "data/reports/baseline_classifier_metrics.json", "r", encoding="utf-8"
+    ) as file:
+        baseline_classifier_metrics = json.load(file)
+
     logger.info("Load trained model")
     model = joblib.load("./models/model.joblib")
 
@@ -74,6 +81,14 @@ def evaluate(config_path: dict) -> pd.DataFrame:
 
     logger.info("Evaluate CV scores DataFrame")
     cv_accuracy = round(cross_val_scores_df.test_accuracy_score.mean(), 3)
+
+    cv_accuracy_vs_baseline = round(
+        cv_accuracy - baseline_classifier_metrics["train_baseline_accuracy"], 3
+    )
+
+    logger.info(
+        "CV VS TRAIN BASELINE ACCURACY DIFF: %s", round(cv_accuracy_vs_baseline, 3)
+    )
 
     logger.info("Load test dataset")
 
@@ -101,6 +116,14 @@ def evaluate(config_path: dict) -> pd.DataFrame:
     prediction_proba = model.predict_proba(x_test)
     prediction_proba_df = pd.DataFrame(prediction_proba)
     prediction_proba_df.columns = ["prediction_proba_df_0", "prediction_proba_df_1"]
+
+    # ---------------------------------------------
+
+    evaluation_accuracy = accuracy_score(y_test, prediction_value)
+
+    logger.info(
+        "EVALUATION 2 LINES PER GAME ACCURACY: %s", round(evaluation_accuracy, 3)
+    )
 
     test_df_w_pred = test_df[
         [
@@ -166,27 +189,13 @@ def evaluate(config_path: dict) -> pd.DataFrame:
     )
 
     logger.info(
-        "EVALUATION 2 LINE PER GAME ACCURACY: %s",
+        "EVALUATION 1 LINE PER GAME ACCURACY: %s",
         round(evaluation_one_line_per_game_accuracy, 3),
     )
 
-    # ---------------------------------------------
-
-    evaluation_accuracy = accuracy_score(y_test, prediction_value)
-
-    logger.info(
-        "EVALUATION 2LINES PER GAME ACCURACY: %s", round(evaluation_accuracy, 3)
-    )
-
-    logger.info("Load Baseline dataset")
-    # Open and read the JSON file
-    with open(
-        "data/reports/baseline_classifier_metrics.json", "r", encoding="utf-8"
-    ) as file:
-        baseline_classifier_metrics = json.load(file)
 
     eval_vs_baseline_accuracy = round(
-        evaluation_accuracy - baseline_classifier_metrics["baseline_accuracy"], 3
+        evaluation_accuracy - baseline_classifier_metrics["test_baseline_accuracy"], 3
     )
 
     logger.info(
@@ -195,6 +204,7 @@ def evaluate(config_path: dict) -> pd.DataFrame:
 
     report = {
         "cv_accuracy": round(cv_accuracy, 3),
+        "cv_accuracy_vs_baseline": cv_accuracy_vs_baseline,
         "evaluation_2lg_accuracy": round(evaluation_accuracy, 3),
         "evaluation_1lg_accuracy": round(evaluation_one_line_per_game_accuracy, 3),
         "eval_vs_baseline_diff_accuracy": eval_vs_baseline_accuracy,
@@ -208,6 +218,7 @@ def evaluate(config_path: dict) -> pd.DataFrame:
         json.dump(
             obj={
                 "accuracy_cv_score": report["cv_accuracy"],
+                "cv_accuracy_vs_baseline": report['cv_accuracy_vs_baseline'],
                 "accuracy_2lg_evaluation_score": report["evaluation_2lg_accuracy"],
                 "accuracy_1lg_evaluation_score": report["evaluation_1lg_accuracy"],
                 "eval_vs_baseline_diff_accuracy": report[
