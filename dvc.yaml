@@ -3,22 +3,30 @@ vars:
       aws: cads-it
       directory: .
 stages:
+  get_training_dataset:
+    cmd:
+    - >-
+      aws s3 cp
+      s3://foreshadownba/dvc-data-pipeline-output/ --profile=ipfy
+      ${project.directory}/data/input/nba_training_dataset.csv
+    outs:
+      - ${project.directory}/data/input/nba_training_dataset.csv
   data_process:
     cmd: python -m src.data_process --config=params.yaml
     deps:
       - src/data_process.py
-      - ./data/input/nba_training_dataset.csv
+      - ${project.directory}/data/input/nba_training_dataset.csv
     params:
       - base
       - get_training_dataset
       - data_process
     outs:
-      - ./data/processed/nba_training_dataset_processed.csv
+      - ${project.directory}/data/processed/nba_training_dataset_processed.csv
   data_split:
     cmd: python -m src.data_split --config=params.yaml
     deps:
       - src/data_split.py
-      - ./data/processed/nba_training_dataset_processed.csv
+      - ${project.directory}/data/processed/nba_training_dataset_processed.csv
     params:
       - base
       - get_training_dataset
