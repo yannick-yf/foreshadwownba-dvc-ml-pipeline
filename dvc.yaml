@@ -1,6 +1,5 @@
 vars:
   - project:
-      aws: cads-it
       directory: .
 stages:
   get_training_dataset:
