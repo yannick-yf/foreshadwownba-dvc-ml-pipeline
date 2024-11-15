@@ -8,7 +8,7 @@ stages:
     - >-
       aws s3 cp
       s3://foreshadownba/dvc-data-pipeline-output/nba_games_training_dataset_final.csv
-      ${project.directory}/data/input/nba_games_training_dataset_final.csv --profile=ipfy
+      ${project.directory}/data/input/nba_games_training_dataset_final.csv
     outs:
       - ${project.directory}/data/input/nba_games_training_dataset_final.csv
   data_process:
