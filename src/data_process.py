@@ -17,12 +17,13 @@ def data_process(config_path: dict) -> None:
 
     logger = get_logger("DATA_SPLIT_STEP", log_level=config["base"]["log_level"])
 
-    dataset = pd.read_csv(config["get_training_dataset"]["training_dataset"])
+    dataset = pd.read_csv('./data/input/nba_games_training_dataset_final.csv')
 
-    # Manual feature selection and delation
-    list_column_to_drop = config["data_process"]["list_column_to_drop"]
-    dataset_processed = dataset.drop(list_column_to_drop, axis=1)
-
+    # # Manual feature selection and delation
+    # list_column_to_drop = config["data_process"]["list_column_to_drop"]
+    # dataset_processed = dataset.drop(list_column_to_drop, axis=1)
+    dataset_processed = dataset
+    
     dataset_processed.to_csv(
         config["data_process"]["training_dataset_processed"], index=False
     )

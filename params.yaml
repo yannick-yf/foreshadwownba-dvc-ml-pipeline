@@ -4,18 +4,10 @@ base:
   random_state: 42
 
 get_training_dataset:
-  training_dataset: data/input/nba_training_dataset.csv
+  training_dataset: data/input/nba_games_training_dataset_final.csv
 
 data_process:
   training_dataset_processed: data/processed/nba_training_dataset_processed.csv
-  list_column_to_drop:
-    - extdom
-    - week_weekend
-    - last_game_overtime
-    - tm_opp 
-    - opp_opp
-    - pts_tm
-    - pts_opp
 
 data_split:
   split_ratio: 0.33
@@ -30,7 +22,7 @@ initial_multiple_models_training:
 
 feature_selection:
   method: automatic # manual
-  list_nb_feature_to_select: "5/10/15/20"
+  list_nb_feature_to_select: "3/4/5"
   rfe_step: 10
   cross_validation_n_splits: 5
   random_state: 21
@@ -41,43 +33,6 @@ feature_selection:
     - before_average_W_ratio_opp
     - extdom_ext
     - rest
-    - before_average_pts_tm  
-    - before_average_lastfivegame_pts_tm  
-    - before_average_lasttengame_pts_tm  
-    - diff_all_minus_lastfivegame_pts_tm  
-    - diff_all_minus_lasttengame_pts_tm  
-    - before_average_pts_opp  
-    - before_average_lastfivegame_pts_opp  
-    - before_average_lasttengame_pts_opp  
-    - diff_all_minus_lastfivegame_pts_opp  
-    - diff_all_minus_lasttengame_pts_opp  
-    - before_average_lastfivegame_W_ratio  
-    - before_average_lasttengame_W_ratio  
-    - diff_all_minus_lastfivegame_W_ratio  
-    - diff_all_minus_lasttengame_W_ratio  
-    - before_season_ratio  
-    - duration_trip  
-    - before_average_duration_trip  
-    - before_average_lastfivegame_duration_trip  
-    - before_average_lasttengame_duration_trip  
-    - before_sum_lastfivegame_duration_trip  
-    - before_sum_lasttengame_duration_trip  
-    - nb_games_last_5days  
-    - nb_games_last_7days  
-    - nb_games_last_10days  
-    - nb_ext_games_last_5days  
-    - nb_ext_games_last_7days  
-    - nb_ext_games_last_10days  
-    - nb_dom_games_last_5days  
-    - nb_dom_games_last_7days  
-    - nb_dom_games_last_10days  
-    - sum_duration_trip_opp_n_last_5days  
-    - sum_duration_trip_opp_n_last_7days  
-    - sum_duration_trip_opp_n_last_10days
-    - before_ratio_win_ext  
-    - before_ratio_win_dom  
-    - before_streak_w_l  
-    - last_game_overtime_NOT
 
 train:
   top_3_models: data/processed/top_3_models.csv
