@@ -2,14 +2,14 @@ vars:
   - project:
       directory: .
 stages:
-  get_training_dataset:
-    cmd:
-    - >-
-      aws s3 cp
-      s3://foreshadownba/dvc-data-pipeline-output/nba_games_training_dataset_final.csv
-      ${project.directory}/data/input/nba_games_training_dataset_final.csv
-    outs:
-      - ${project.directory}/data/input/nba_games_training_dataset_final.csv
+  # get_training_dataset:
+  #   cmd:
+  #   - >-
+  #     aws s3 cp
+  #     s3://foreshadownba/dvc-data-pipeline-output/nba_games_training_dataset_final.csv
+  #     ${project.directory}/data/input/nba_games_training_dataset_final.csv
+  #   outs:
+  #     - ${project.directory}/data/input/nba_games_training_dataset_final.csv
   data_process:
     cmd: python -m src.data_process --config=params.yaml
     deps:
