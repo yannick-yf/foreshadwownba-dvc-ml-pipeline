@@ -1,1 +1,1 @@
-{"accuracy_cv_score": 0.648, "cv_accuracy_vs_baseline": 0.02, "accuracy_2lg_evaluation_score": 0.646, "accuracy_1lg_evaluation_score": 0.643, "eval_vs_baseline_diff_accuracy": 0.018}
+{"accuracy_cv_score": 0.65, "cv_accuracy_vs_baseline": 0.017, "accuracy_2lg_evaluation_score": 0.649, "accuracy_1lg_evaluation_score": 0.648, "eval_vs_baseline_diff_accuracy": 0.016}

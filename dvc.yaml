@@ -114,6 +114,15 @@ stages:
       metrics:
       - data/reports/metrics.json:
           cache: false
+  # write_final_model_to_s3:
+  #     cmd:
+  #     - >-
+  #       aws s3 cp
+  #       ${project.directory}/models/model.joblib
+  #       s3://foreshadownba/dvc-ml-pipeline-output/
+  #       --profile=ipfy
+  #     deps:
+  #     - ${project.directory}/models/
       
 
 
