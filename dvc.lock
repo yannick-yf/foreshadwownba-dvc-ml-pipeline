@@ -98,8 +98,8 @@ stages:
     outs:
     - path: ./data/input/nba_games_training_dataset_final.csv
       hash: md5
-      md5: 5f0ce3f31ada5eb9b717309f2810287d
-      size: 13493128
+      md5: 4ca5cf7109bf2a2729f7df9650bcf505
+      size: 13554549
   pre_cleaning_dataset:
     cmd: python3 -m src.pre_cleaning_dataset --config=params.yaml
     deps:
@@ -285,8 +285,8 @@ stages:
     deps:
     - path: ./data/processed/nba_training_dataset_processed.csv
       hash: md5
-      md5: 5f0ce3f31ada5eb9b717309f2810287d
-      size: 13493128
+      md5: 4ca5cf7109bf2a2729f7df9650bcf505
+      size: 13554549
     - path: src/data_split.py
       hash: md5
       md5: e3d797c10c7a557b399a96111068696e
@@ -304,12 +304,12 @@ stages:
     outs:
     - path: ./data/processed/test_dataset.csv
       hash: md5
-      md5: 4ff7695781f6b2ddd7e6fa7e4611627a
-      size: 4448905
+      md5: e76d36a160eb00bc71f0ef98971152ed
+      size: 4466276
     - path: ./data/processed/train_dataset.csv
       hash: md5
-      md5: cf17e70803a92dcd48bece47c03c2a0d
-      size: 9045525
+      md5: e98834df0accf265f169cd3405a4bd68
+      size: 9089575
   dummy_and_baseline_classifier:
     cmd: python -m src.dummy_and_baseline_classifier --config=params.yaml
     deps:
@@ -347,12 +347,12 @@ stages:
     deps:
     - path: ./data/processed/test_dataset_fs.csv
       hash: md5
-      md5: 016904bc81042a66eb32fecf7433d9e5
-      size: 1112634
+      md5: 0f8f750f2abf0c8007f2cc34615ec780
+      size: 1116852
     - path: ./data/processed/train_dataset_fs.csv
       hash: md5
-      md5: 02a38f2d25cc204add327f514bdcd77f
-      size: 2265550
+      md5: f1a66fd9ed45dc2308c5b4670aa3bd30
+      size: 2276874
     - path: src/initial_multiple_models_training.py
       hash: md5
       md5: cf67290f1c418472f5c1f5afb7df3ab4
@@ -371,19 +371,15 @@ stages:
     outs:
     - path: data/processed/top_3_models.csv
       hash: md5
-      md5: b35d89dc1f50000e648fb6a568ad5829
-      size: 75
+      md5: 837b7930c007cd40aeabbb9a9d75e68b
+      size: 64
   train:
     cmd: python -m src.train --config=params.yaml
     deps:
-    - path: ./data/processed/test_dataset_fs.csv
-      hash: md5
-      md5: 016904bc81042a66eb32fecf7433d9e5
-      size: 1112634
     - path: ./data/processed/train_dataset_fs.csv
       hash: md5
-      md5: 02a38f2d25cc204add327f514bdcd77f
-      size: 2265550
+      md5: f1a66fd9ed45dc2308c5b4670aa3bd30
+      size: 2276874
     - path: src/train.py
       hash: md5
       md5: dce79a06d700f038988c2c2bf6e9d69b
@@ -406,36 +402,36 @@ stages:
         train:
           top_3_models: data/processed/top_3_models.csv
           model_name: Extreme Gradient Boosting
-          cross_validation_n_splits: 5
+          cross_validation_n_splits: 10
           scoring_metric: accuracy
           param_grid:
-            max_depth: 5
-            n_estimators: 750
+            max_depth: 4
+            n_estimators: 1000
             learning_rate: 0.01
     outs:
     - path: ./models/cross_val_pred.csv
       hash: md5
-      md5: a4310f5e39f6370b67db4e9b249cc6b2
-      size: 1363342
+      md5: 41d35802e714b8d714a9233cece21e15
+      size: 1369248
     - path: ./models/cross_val_score.csv
       hash: md5
-      md5: e054c13e5614093379c0f0d50e42e560
-      size: 4468
+      md5: 42b359621ade9c992a14876687923b9f
+      size: 8788
     - path: ./models/model.joblib
       hash: md5
-      md5: a79a36f8f5bd464a3f35555dabf379f8
-      size: 2027879
+      md5: 57093c3e59fcb34357c01b6f44686c07
+      size: 1692831
   feature_selection:
     cmd: python -m src.feature_selection --config=params.yaml
     deps:
     - path: ./data/processed/test_dataset.csv
       hash: md5
-      md5: 4ff7695781f6b2ddd7e6fa7e4611627a
-      size: 4448905
+      md5: e76d36a160eb00bc71f0ef98971152ed
+      size: 4466276
     - path: ./data/processed/train_dataset.csv
       hash: md5
-      md5: cf17e70803a92dcd48bece47c03c2a0d
-      size: 9045525
+      md5: e98834df0accf265f169cd3405a4bd68
+      size: 9089575
     - path: src/feature_selection.py
       hash: md5
       md5: 686136bd8f1cffb2c8120448c71c044b
@@ -451,7 +447,7 @@ stages:
         dummy_classifier:
           target_variable: results
         feature_selection:
-          method: automatic
+          method: manual
           list_nb_feature_to_select: 5/7/9
           rfe_step: 10
           cross_validation_n_splits: 5
@@ -476,23 +472,27 @@ stages:
       size: 193
     - path: ./data/processed/test_dataset_fs.csv
       hash: md5
-      md5: 016904bc81042a66eb32fecf7433d9e5
-      size: 1112634
+      md5: 0f8f750f2abf0c8007f2cc34615ec780
+      size: 1116852
     - path: ./data/processed/train_dataset_fs.csv
       hash: md5
-      md5: 02a38f2d25cc204add327f514bdcd77f
-      size: 2265550
+      md5: f1a66fd9ed45dc2308c5b4670aa3bd30
+      size: 2276874
   evaluate:
     cmd: python3 -m src.evaluate --config=params.yaml
     deps:
+    - path: ./data/processed/test_dataset_fs.csv
+      hash: md5
+      md5: 0f8f750f2abf0c8007f2cc34615ec780
+      size: 1116852
     - path: ./data/reports/baseline_classifier_metrics.json
       hash: md5
-      md5: 2ca1c35b02bbc109a8ef771ab580ad69
+      md5: a72eb2c86e31cd94f7d927ffc2c6a353
       size: 67
     - path: ./models/cross_val_score.csv
       hash: md5
-      md5: e054c13e5614093379c0f0d50e42e560
-      size: 4468
+      md5: 42b359621ade9c992a14876687923b9f
+      size: 8788
     - path: src/evaluate.py
       hash: md5
       md5: 11b91d575bfd682a19808446a0e8f9f4
@@ -512,48 +512,48 @@ stages:
         train:
           top_3_models: data/processed/top_3_models.csv
           model_name: Extreme Gradient Boosting
-          cross_validation_n_splits: 5
+          cross_validation_n_splits: 10
           scoring_metric: accuracy
           param_grid:
-            max_depth: 5
-            n_estimators: 750
+            max_depth: 4
+            n_estimators: 1000
             learning_rate: 0.01
     outs:
     - path: ./models/test_df_w_pred.csv
       hash: md5
-      md5: 300f5dbef66f8f723ed85f76ed0cfe3e
-      size: 671575
+      md5: adfc04dd2a01d06c982f71e8be9fecdc
+      size: 674803
     - path: data/reports/ConfusionMatrix.png
       hash: md5
-      md5: 17c1f8354b24f27f0b3fb359a7c41432
-      size: 17102
+      md5: 14a98fc04c3842c24a516ba2c360ba32
+      size: 17094
     - path: data/reports/bar_plot_data.csv
       hash: md5
-      md5: cd15751b76543fb1a3bc8a10f36664e3
-      size: 162
+      md5: b0f74d10f2b39ed86febfec6c8e6de32
+      size: 163
     - path: data/reports/metrics.json
       hash: md5
-      md5: c801b7adafbddcdc498ef7d66a29f328
-      size: 182
+      md5: 9e7710d8f537fa7e304eecdf586edbb6
+      size: 183
     - path: data/reports/shap_beeswarm.png
       hash: md5
-      md5: 178167df6ec9fbccc8d0e104f3a216c5
-      size: 113434
+      md5: cc468c25ee405083ddd792f060980562
+      size: 111114
     - path: data/reports/shap_plot_bar.png
       hash: md5
-      md5: b9d7f054eceaf1056be1d287d1a65321
-      size: 49534
+      md5: a0d30e8b599171657499501d55ddc744
+      size: 48621
   data_process:
     cmd: python -m src.data_process --config=params.yaml
     deps:
     - path: ./data/input/nba_games_training_dataset_final.csv
       hash: md5
-      md5: 5f0ce3f31ada5eb9b717309f2810287d
-      size: 13493128
+      md5: 4ca5cf7109bf2a2729f7df9650bcf505
+      size: 13554549
     - path: src/data_process.py
       hash: md5
-      md5: 55facadb02fac2735fdcbadff21383c8
-      size: 1118
+      md5: ba86fc58cc64f54aa90fbdeb697ed91a
+      size: 1115
     params:
       params.yaml:
         base:
@@ -566,19 +566,19 @@ stages:
     outs:
     - path: ./data/processed/nba_training_dataset_processed.csv
       hash: md5
-      md5: 5f0ce3f31ada5eb9b717309f2810287d
-      size: 13493128
+      md5: 4ca5cf7109bf2a2729f7df9650bcf505
+      size: 13554549
   baseline_classifier:
     cmd: python -m src.baseline_classifier --config=params.yaml
     deps:
     - path: ./data/processed/test_dataset.csv
       hash: md5
-      md5: 4ff7695781f6b2ddd7e6fa7e4611627a
-      size: 4448905
+      md5: e76d36a160eb00bc71f0ef98971152ed
+      size: 4466276
     - path: ./data/processed/train_dataset.csv
       hash: md5
-      md5: cf17e70803a92dcd48bece47c03c2a0d
-      size: 9045525
+      md5: e98834df0accf265f169cd3405a4bd68
+      size: 9089575
     - path: src/baseline_classifier.py
       hash: md5
       md5: 08198825061539772b047bdb1c56cc2b
@@ -598,14 +598,22 @@ stages:
     outs:
     - path: ./data/reports/baseline_classifier_metrics.json
       hash: md5
-      md5: 2ca1c35b02bbc109a8ef771ab580ad69
+      md5: a72eb2c86e31cd94f7d927ffc2c6a353
       size: 67
   write_final_model_to_s3:
     cmd:
     - aws s3 cp ./models/model.joblib s3://foreshadownba/dvc-ml-pipeline-output/ --profile=ipfy
+    - aws s3 cp ./models/cross_val_pred.csv s3://foreshadownba/dvc-ml-pipeline-output/
+      --profile=ipfy
+    - aws s3 cp ./data/processed/columns_selected.csv s3://foreshadownba/dvc-ml-pipeline-output/
+      --profile=ipfy
     deps:
+    - path: ./data/processed/columns_selected.csv
+      hash: md5
+      md5: 1c693c4651cd7860b51fa47a1b3f4a80
+      size: 193
     - path: ./models/
       hash: md5
-      md5: c43c618048f32a372d795c12892a040b.dir
-      size: 4067368
+      md5: 6f088a9b0ecc51f0785fef37b646f2f2.dir
+      size: 3745774
       nfiles: 5

@@ -21,7 +21,7 @@ initial_multiple_models_training:
   cross_validation_n_splits: 5
 
 feature_selection:
-  method: automatic # manual
+  method: manual # automatic # manual
   list_nb_feature_to_select: "5/7/9"
   rfe_step: 10
   cross_validation_n_splits: 5
@@ -41,11 +41,11 @@ feature_selection:
 train:
   top_3_models: data/processed/top_3_models.csv
   model_name: Extreme Gradient Boosting
-  cross_validation_n_splits: 5
+  cross_validation_n_splits: 10
   scoring_metric: accuracy
   param_grid:
-    max_depth: 5
-    n_estimators: 750
+    max_depth: 4
+    n_estimators: 1000
     learning_rate: 0.01
 
 evaluate:

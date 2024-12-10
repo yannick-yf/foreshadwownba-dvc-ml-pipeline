@@ -15,7 +15,7 @@ def data_process(config_path: dict) -> None:
     with open(config_path, encoding="utf-8") as conf_file:
         config = yaml.safe_load(conf_file)
 
-    logger = get_logger("DATA_SPLIT_STEP", log_level=config["base"]["log_level"])
+    logger = get_logger("DATA_PROCESS", log_level=config["base"]["log_level"])
 
     dataset = pd.read_csv('./data/input/nba_games_training_dataset_final.csv')
 

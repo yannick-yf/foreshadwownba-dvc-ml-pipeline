@@ -2,14 +2,14 @@ vars:
   - project:
       directory: .
 stages:
-  # get_training_dataset:
-  #   cmd:
-  #   - >-
-  #     aws s3 cp
-  #     s3://foreshadownba/dvc-data-pipeline-output/nba_games_training_dataset_final.csv
-  #     ${project.directory}/data/input/nba_games_training_dataset_final.csv
-  #   outs:
-  #     - ${project.directory}/data/input/nba_games_training_dataset_final.csv
+  get_training_dataset:
+    cmd:
+    - >-
+      aws s3 cp
+      s3://foreshadownba/dvc-data-pipeline-output/nba_games_training_dataset_final.csv
+      ${project.directory}/data/input/nba_games_training_dataset_final.csv
+    outs:
+      - ${project.directory}/data/input/nba_games_training_dataset_final.csv
   data_process:
     cmd: python -m src.data_process --config=params.yaml
     deps:
@@ -80,7 +80,6 @@ stages:
         - src/train.py
         - src/training/train_cross_val.py
         - ./data/processed/train_dataset_fs.csv
-        - ./data/processed/test_dataset_fs.csv
       params:
         - base
         - train
@@ -95,6 +94,7 @@ stages:
       deps:
         - src/evaluate.py
         - ./models/cross_val_score.csv
+        - ./data/processed/test_dataset_fs.csv
         - ./data/reports/baseline_classifier_metrics.json
       params:
         - base
@@ -114,15 +114,26 @@ stages:
       metrics:
       - data/reports/metrics.json:
           cache: false
-  # write_final_model_to_s3:
-  #     cmd:
-  #     - >-
-  #       aws s3 cp
-  #       ${project.directory}/models/model.joblib
-  #       s3://foreshadownba/dvc-ml-pipeline-output/
-  #       --profile=ipfy
-  #     deps:
-  #     - ${project.directory}/models/
+  write_final_model_to_s3: # We need to put a condition here
+      cmd:
+      - >-
+        aws s3 cp
+        ${project.directory}/models/model.joblib
+        s3://foreshadownba/dvc-ml-pipeline-output/
+        --profile=ipfy
+      - >-
+        aws s3 cp
+        ${project.directory}/models/cross_val_pred.csv
+        s3://foreshadownba/dvc-ml-pipeline-output/
+        --profile=ipfy
+      - >-
+        aws s3 cp
+        ${project.directory}/data/processed/columns_selected.csv
+        s3://foreshadownba/dvc-ml-pipeline-output/
+        --profile=ipfy
+      deps:
+      - ${project.directory}/models/
+      - ${project.directory}/data/processed/columns_selected.csv
       
 
 
